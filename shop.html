@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Фото-магазин — Покупка</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0;
+    background: #1d1d1d;
+    color: white;
+  }
+  .top-bar { width: 100%; position: relative; }
+  header {
+    width: 100%;
+    background: #000;
+    color: white;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 18px;
+  }
+  .marquee-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    padding: 8px 0;
+  }
+  .marquee-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 15s linear infinite;
+    color: red;
+    font-weight: bold;
+    font-size: 18px;
+  }
+  @keyframes marquee {
+    0% { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* Блок кнопок под бегущей строкой */
+  .top-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin: 5px 10px 10px 10px;
+    gap: 10px;
+  }
+  .top-btn {
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    padding: 2px 6px;
+  }
+  .left-btn { order: 1; }
+  .right-btn { order: 2; }
+  .top-btn:hover { color: #ff4d4d; }
+
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  h2.title-h2 {
+    align-self: flex-start;
+    margin-left: 10px;
+    margin-top: 10px;
+    margin-bottom: 0;
+    color: white;
+  }
+  .container {
+    position: relative;
+    background: url('https://i.ibb.co/c57nhgY/beekeeper-working-bee-farm-23-2151441056-1.jpg') no-repeat center center;
+    background-size: cover;
+    padding: 30px 40px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-width: 360px;
+    width: calc(100% - 100px);
+    margin-top: 10px;
+    color: white;
+    height: 100px;
+    overflow: hidden;
+    transition: height 0.4s ease;
+  }
+  h3 { margin: 0 0 15px 0; font-weight: normal; text-align: center; }
+  img { max-width: 100%; border-radius: 8px; margin-bottom: 15px; display: none; }
+  .btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    font-size: 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+    width: 100%;
+  }
+  .btn:hover { background: #218838; }
+  .btn.buy-btn {
+    width: 120px;
+    padding: 8px 12px;
+    font-size: 14px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    margin-top: 0;
+  }
+  select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+  }
+  .hidden { display: none; }
+  .back-btn { background: #6c757d; margin-top: 10px; }
+  .back-btn:hover { background: #5a6268; }
+  #priceInfo {
+    margin-top: 12px;
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+  }
+  #paymentLink {
+    margin-top: 15px;
+    color: #0f0;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <header>Здесь может быть ваш баннер или логотип</header>
+  <div class="marquee-container">
+    <div class="marquee-text">В лесу родилась елочка</div>
+  </div>
+  <!-- Кнопки под бегущей строкой -->
+  <div class="top-buttons">
+    <a href="{{ url_for('my_orders') }}" class="top-btn left-btn">Мои покупки</a>
+    <a href="{{ url_for('logout') }}" class="top-btn right-btn">Выход</a>
+  </div>
+</div>
+
+<div class="main-container">
+  <h2 class="title-h2">Товар 1</h2>
+
+  <div class="container" id="container">
+    <div id="step-product">
+      <img src="" />
+      <button class="btn buy-btn" onclick="showStep('city')">Купить</button>
+    </div>
+
+    <div id="step-city" class="hidden">
+      <h3>Выберите город</h3>
+      <select id="selectCity">
+        <option value="">-- Выберите город --</option>
+        <option value="Москва">Москва</option>
+        <option value="Санкт-Петербург">Санкт-Петербург</option>
+        <option value="Казань">Казань</option>
+      </select>
+      <button class="btn" onclick="nextCity()">Далее</button>
+      <button class="btn back-btn" onclick="showStep('product')">Назад</button>
+    </div>
+
+    <div id="step-weight" class="hidden">
+      <h3>Выберите вес</h3>
+      <select id="selectWeight" onchange="updatePrice()">
+        <option value="">-- Выберите вес --</option>
+        <option value="100г">100 г</option>
+        <option value="250г">250 г</option>
+        <option value="500г">500 г</option>
+      </select>
+      <div id="priceInfo"></div>
+      <button class="btn" onclick="nextWeight()">Далее</button>
+      <button class="btn back-btn" onclick="showStep('city')">Назад</button>
+    </div>
+
+    <div id="step-pay" class="hidden">
+      <h3>Проверьте заказ</h3>
+      <p id="orderSummary"></p>
+      <button class="btn" onclick="payNow()">Оплатить</button>
+      <button class="btn back-btn" onclick="showStep('weight')">Назад</button>
+      <div id="paymentLink"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const priceMap = { "100г": 15, "250г": 30, "500г": 50 };
+  const container = document.getElementById('container');
+
+  function showStep(step) {
+    ['product','city','weight','pay'].forEach(s => {
+      document.getElementById('step-' + s).classList.add('hidden');
+    });
+    document.getElementById('step-' + step).classList.remove('hidden');
+
+    if (step === 'product') {
+      container.style.height = '100px';
+      document.getElementById('paymentLink').innerHTML = '';
+    } else {
+      container.style.height = 'auto';
+    }
+  }
+
+  function nextCity() {
+    const city = document.getElementById('selectCity').value;
+    if (!city) {
+      alert('Пожалуйста, выберите город');
+      return;
+    }
+    showStep('weight');
+  }
+
+  function updatePrice() {
+    const weight = document.getElementById('selectWeight').value;
+    const priceDiv = document.getElementById('priceInfo');
+    if (priceMap[weight]) {
+      priceDiv.textContent = `Цена: ${priceMap[weight]} LTC`;
+    } else {
+      priceDiv.textContent = '';
+    }
+  }
+
+  function nextWeight() {
+    const weight = document.getElementById('selectWeight').value;
+    const city = document.getElementById('selectCity').value;
+    if (!weight) {
+      alert('Пожалуйста, выберите вес');
+      return;
+    }
+    const price = priceMap[weight];
+    const summary = `Город: ${city}\nВес: ${weight}\nЦена: ${price} LTC`;
+    document.getElementById('orderSummary').innerText = summary;
+    showStep('pay');
+  }
+
+  async function payNow() {
+    const city = document.getElementById('selectCity').value;
+    const weight = document.getElementById('selectWeight').value;
+    const price = priceMap[weight];
+
+    if (!city || !weight || !price) {
+      alert('Что-то выбрано не правильно');
+      return;
+    }
+
+    try {
+      const response = await fetch('/create_payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ city, weight, price }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert('Ошибка при создании счета: ' + (errorData.message || 'неизвестная ошибка'));
+        return;
+      }
+
+      const data = await response.json();
+      const paymentDiv = document.getElementById('paymentLink');
+      paymentDiv.innerHTML = `<p>Перейдите по ссылке для оплаты:<br><a href="${data.invoice_url}" target="_blank">${data.invoice_url}</a></p>`;
+    } catch (error) {
+      alert('Ошибка при отправке запроса на оплату.');
+    }
+  }
+</script>
+
+</body>
+</html>
