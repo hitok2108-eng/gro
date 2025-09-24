@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Фото-магазин — Главная</title>
+<style>
+  :root {
+    --banner-font-size: 25px;
+    --marquee-font-size: 12px;
+  }
+
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #1d1d1d;
+    color: white;
+  }
+
+  header {
+    width: 100%;
+    background: #000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    font-size: var(--banner-font-size);
+    box-sizing: border-box;
+  }
+
+  .header-title {
+    font-weight: bold;
+    white-space: nowrap;
+  }
+
+  .header-buttons {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .top-btn {
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+    padding: 4px 8px;
+  }
+
+  .top-btn:hover { color: #ff4d4d; }
+
+  .bell {
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .marquee-container {
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    padding: 8px 0;
+    background: #111;
+  }
+
+  .marquee-text {
+    display: inline-block;
+    padding-left: 100%;
+    animation: marquee 15s linear infinite;
+    color: red;
+    font-weight: bold;
+    font-size: var(--marquee-font-size);
+  }
+
+  @keyframes marquee {
+    0%   { transform: translateX(0%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  .banner-area {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin: 15px auto;
+    width: 100%;
+    padding: 10px;
+    border: 2px dashed red;
+    box-sizing: border-box;
+  }
+
+  .banner {
+    flex: 1 1 45%;
+    min-width: 200px;
+    max-width: 100%;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    aspect-ratio: 1870/240;
+    padding: 0;
+  }
+
+  .banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .main-container {
+    width: 100%;
+    margin: 20px auto;
+    padding: 5px;
+    background: #222;
+    border-radius: 10px;
+    box-sizing: border-box;
+  }
+
+  h2.title-h2 {
+    margin: 0 0 10px 0;
+    color: white;
+    font-size: 22px;
+  }
+
+  
+  /* 🔵 Стили магазинов */
+  .shop-container {
+    display: flex;
+    align-items: flex-start;
+    background: #1d1d1d;
+    border: 2px solid #0077ff;
+    border-radius: 10px;
+    margin: 10px auto;
+    padding: 10px;
+    max-width: 800px;
+    width: 90%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: white;
+  }
+
+  
+  .shop-neon {
+  border: 2px solid #0ff;            /* основной цвет неона */
+  box-shadow: 0 0 10px #0ff, 0 0 20px #0ff, 0 0 30px #0ff;
+ }
+  
+  .shop-animated {
+  border: 3px solid transparent;                /* сама рамка прозрачная */
+  border-radius: 10px;
+  background: linear-gradient(90deg, #0077ff, #ff4d9e, #0077ff);
+  background-size: 300% 300%;                  /* чтобы градиент «ездил» */
+  animation: gradientMove 4s linear infinite;  /* бесконечное движение */
+  -webkit-background-clip: padding-box;        /* чтобы фон был только на рамке */
+          background-clip: padding-box;
+}
+
+/* Анимация движения градиента */
+@keyframes gradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+  
+  .shop-gradient {
+  border: 3px solid transparent; /* прозрачная рамка */
+  border-radius: 10px;
+  background: 
+    linear-gradient(#1d1d1d, #1d1d1d) padding-box, /* фон внутри */
+    linear-gradient(90deg, #0077ff, #ff4d9e, #0077ff) border-box; /* рамка */
+  background-size: 300% 300%;
+  animation: borderMove 5s linear infinite;
+}
+
+@keyframes borderMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.shop-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+    color: white;          /* цвет белый */
+    text-decoration: none;  /* убираем подчеркивание */
+    cursor: pointer;        /* курсор как при ссылке */
+}
+.shop-title:hover {
+    color: #ff4d9e;         /* можно оставить эффект при наведении или убрать */
+}
+
+
+  .shop-image {
+    flex: 0 0 70px;
+    margin-right: 15px;
+  }
+
+  .shop-image img {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 5px;
+    display: block;
+  }
+
+  .shop-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .shop-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 5px 0;
+  }
+
+  .shop-description {
+    font-size: 12px;
+    line-height: 1.2;
+    margin: 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* максимум 5 строк */
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+  }
+
+  @media (max-width: 600px) {
+    .banner {
+      flex: 1 1 100%;
+    }
+    header {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  /* Модальное окно */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 10;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background: #fff;
+    color: #000;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 10px;
+    text-align: left;
+  }
+
+  .close {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+  }
+
+  .messages {
+    margin-top: 15px;
+  }
+
+  .message {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: #f1f1f1;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  .notification {
+  position: relative;
+  display: inline-block;
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  line-height: 1;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">Альянс</div>
+  <div class="header-buttons">
+    <a href="" class="top-btn">Мои покупки</a>
+    <a href="{{ url_for('logout') }}" class="top-btn">Выход</a>
+   <!-- <div class="bell" id="bell">🔔</div>-->
+    <div class="notification">
+  <div class="bell" id="notif-bell">🔔</div>
+  <span class="badge" id="notif-count"></span>
+</div>
+
+
+  </div>
+</header>
+
+<div class="marquee-container">
+  <div class="marquee-text">В лесу родилась елочка</div>
+</div>
+
+<!-- 🔴 Блок баннеров -->
+<div class="banner-area">
+  <a href="{{ url_for('shop') }}">
+    <div class="banner"><img src="https://i.ibb.co/8DHQmRNs/leon-Pro1870120-050823.gif" alt="Баннер 1"></div>
+  </a>
+  <a href="https://example.com" target="_blank">
+    <div class="banner"><img src="https://i.ibb.co/c57nhgY/beekeeper-working-bee-farm-23-2151441056-1.jpg" alt="Баннер 2"></div>
+  </a>
+  <a href="shop.html">
+    <div class="banner"><img src="https://i.ibb.co/WvS3vhJC/Swat-Verified1870240-070325.gif" alt="Баннер 3"></div>
+  </a>
+  <a href="https://example.com" target="_blank">
+    <div class="banner"><img src="https://i.ibb.co/WvS3vhJC/Swat-Verified1870240-070325.gif" alt="Баннер 4"></div>
+  </a>
+</div>
+
+<div class="main-container">
+  <h2 class="title-h2">Добро пожаловать!</h2>
+
+  <!-- 🔵 Магазины -->
+  <div class="shop-container ">
+    <div class="shop-image">
+      <img src="https://i.ibb.co/c57nhgY/beekeeper-working-bee-farm-23-2151441056-1.jpg" alt="Фото магазина 1">
+    </div>
+    <div class="shop-info">
+      <a href="https://example.com/shop2" class="shop-title" target="_blank">Магазин 2</a>
+      <div class="shop-description">
+        Здесь описание магазина 1. Короткий текст, который помещается аккуратно, но теперь может влезть чуть больше символов без изменения размера блока. Если текста будет больше пяти строк, остальное скроется.
+      </div>
+    </div>
+  </div>
+
+  <div class="shop-container shop-animated">
+    <div class="shop-image">
+      <img src="https://i.ibb.co/8DHQmRNs/leon-Pro1870120-050823.gif" alt="Фото магазина 2">
+    </div>
+    <div class="shop-info">
+      <a href="https://example.com/shop2" class="shop-title" target="_blank">Магазин 2</a>
+      <div class="shop-description">
+        Здесь описание магазина 2. Всё тоже компактно и аккуратно. С уменьшенным размером текста помещается больше информации, и блок остаётся фиксированным. Если текста слишком много, остальное скрывается автоматически.
+      </div>
+    </div>
+  </div>
+  
+  <div class="shop-container shop-gradient">
+    <div class="shop-image">
+      <img src="https://i.ibb.co/8DHQmRNs/leon-Pro1870120-050823.gif" alt="Фото магазина 2">
+    </div>
+    <div class="shop-info">
+      <a href="https://example.com/shop2" class="shop-title" target="_blank">Магазин 2</a>
+      <div class="shop-description">
+        Здесь описание магазина 2. Всё тоже компактно и аккуратно. С уменьшенным размером текста помещается больше информации, и блок остаётся фиксированным. Если текста слишком много, остальное скрывается автоматически.
+      </div>
+    </div>
+  </div>
+  
+  <div class="shop-container shop-neon">
+    <div class="shop-image">
+      <img src="https://i.ibb.co/8DHQmRNs/leon-Pro1870120-050823.gif" alt="Фото магазина 2">
+    </div>
+    <div class="shop-info">
+      <a href="https://example.com/shop2" class="shop-title" target="_blank">Магазин 2</a>
+      <div class="shop-description">
+        Здесь описание магазина 2. Всё тоже компактно и аккуратно. С уменьшенным размером текста помещается больше информации, и блок остаётся фиксированным. Если текста слишком много, остальное скрывается автоматически.
+      </div>
+    </div>
+  </div>
+  
+  <div class="shop-container">
+    <div class="shop-image">
+      <img src="https://i.ibb.co/8DHQmRNs/leon-Pro1870120-050823.gif" alt="Фото магазина 2">
+    </div>
+    <div class="shop-info">
+      <a href="https://example.com/shop2" class="shop-title" target="_blank">Магазин 2</a>
+      <div class="shop-description">
+        Здесь описание магазина 2. Всё тоже компактно и аккуратно. С уменьшенным размером текста помещается больше информации, и блок остаётся фиксированным. Если текста слишком много, остальное скрывается автоматически.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка -->
+<div id="notif-modal" class="modal">
+  <div class="modal-content">
+    <span class="close" id="close-modal">&times;</span>
+    <h3>Уведомления</h3>
+    <ul id="notif-list"></ul>
+  </div>
+</div>
+
+
+  
+<script>
+const bell = document.getElementById("notif-bell");
+const modal = document.getElementById("notif-modal");
+const closeBtn = document.getElementById("close-modal");
+const notifCount = document.getElementById("notif-count");
+const notifList = document.getElementById("notif-list");
+
+// Обновление числа непрочитанных уведомлений
+async function updateNotificationCount() {
+    try {
+        const res = await fetch('/api/get_unseen_count');
+        const data = await res.json();
+        const count = data.count;
+
+        if (count > 0) {
+            notifCount.style.display = "inline-block";
+            notifCount.innerText = count;
+        } else {
+            notifCount.style.display = "none";
+        }
+    } catch (err) {
+        console.error("Ошибка обновления уведомлений:", err);
+    }
+}
+
+// Загрузка уведомлений в модалку
+async function loadNotifications() {
+    try {
+        const res = await fetch('/api/get_notifications');
+        const notifications = await res.json();
+
+        notifList.innerHTML = "";
+
+        if (notifications.length === 0) {
+            const li = document.createElement("li");
+            li.textContent = "Нет новых уведомлений";
+            notifList.appendChild(li);
+        } else {
+            notifications.forEach(n => {
+                const li = document.createElement("li");
+                li.textContent = n.message + (n.seen ? "" : " (новое)");
+                notifList.appendChild(li);
+            });
+        }
+
+        // Пометить уведомления как просмотренные
+        await fetch('/api/mark_seen', { method: 'POST' });
+        updateNotificationCount();
+    } catch (err) {
+        console.error("Ошибка загрузки уведомлений:", err);
+    }
+}
+
+// События
+document.addEventListener("DOMContentLoaded", () => {
+    updateNotificationCount();
+    setInterval(updateNotificationCount, 10000); // каждые 10 секунд
+
+    bell.addEventListener("click", () => {
+        modal.style.display = "flex";
+        loadNotifications();
+    });
+
+    closeBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Вход / Регистрация</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #1d1d1d;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .container {
+    background: #2c2c2c;
+    padding: 30px;
+    border-radius: 10px;
+    width: 320px;
+  }
+  h2 { text-align: center; }
+  input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #ccc; }
+  button { width: 100%; padding: 12px; border: none; border-radius: 6px; margin-top: 10px; cursor: pointer; background: #28a745; color: white; font-size: 16px; }
+  button:hover { background: #218838; }
+  .switch { text-align: center; margin-top: 12px; cursor: pointer; color: #0f0; }
+  .hidden { display: none; }
+  .flash { color: #f33; text-align: center; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+
+<div class="container" id="loginContainer">
+  <h2 id="formTitle">Вход</h2>
+
+  <!-- Flash сообщения -->
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST" action="/auth" id="authForm">
+    <input type="hidden" name="action" id="formAction" value="login" />
+    <input type="text" name="username" placeholder="Имя пользователя" required />
+    <input type="password" name="password" placeholder="Пароль" required />
+    <input type="password" name="password2" placeholder="Повторите пароль" class="hidden" />
+    <button type="submit">Войти</button>
+  </form>
+
+  <div class="switch" onclick="toggleForm()">Нет аккаунта? Зарегистрироваться</div>
+</div>
+
+<script>
+function toggleForm() {
+  const formTitle = document.getElementById('formTitle');
+  const formAction = document.getElementById('formAction');
+  const password2 = document.querySelector('input[name="password2"]');
+  const submitBtn = document.querySelector('button[type="submit"]');
+  const switchText = document.querySelector('.switch');
+
+  if (formAction.value === 'login') {
+    formAction.value = 'register';
+    formTitle.textContent = 'Регистрация';
+    password2.classList.remove('hidden');
+    submitBtn.textContent = 'Зарегистрироваться';
+    switchText.textContent = 'Уже есть аккаунт? Войти';
+  } else {
+    formAction.value = 'login';
+    formTitle.textContent = 'Вход';
+    password2.classList.add('hidden');
+    submitBtn.textContent = 'Войти';
+    switchText.textContent = 'Нет аккаунта? Зарегистрироваться';
+  }
+}
+</script>
+
+</body>
+</html>
