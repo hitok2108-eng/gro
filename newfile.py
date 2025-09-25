@@ -5,7 +5,6 @@ import threading
 import asyncio
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
-import secrets  # для токена
 
 # ===== Настройки =====
 app = Flask(__name__)
@@ -31,6 +30,7 @@ def init_db():
             timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
+    # Новая таблица для отметки прочитанного
     c.execute("""
         CREATE TABLE IF NOT EXISTS user_notifications (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,13 +38,6 @@ def init_db():
             notification_id INTEGER NOT NULL,
             seen INTEGER DEFAULT 0,
             FOREIGN KEY (notification_id) REFERENCES notifications(id)
-        )
-    """)
-    # 🔹 новая таблица для токенов shop
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS tokens (
-            username TEXT PRIMARY KEY,
-            token TEXT NOT NULL
         )
     """)
     conn.commit()
@@ -83,11 +76,6 @@ def auth():
             c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed))
             conn.commit()
             session['username'] = username
-            # 🔹 генерируем токен при регистрации
-            token = secrets.token_hex(16)
-            c.execute("INSERT OR REPLACE INTO tokens (username, token) VALUES (?, ?)", (username, token))
-            conn.commit()
-            session['token'] = token
             return redirect(url_for('home'))
         except sqlite3.IntegrityError:
             flash("Пользователь с таким именем уже существует")
@@ -97,17 +85,11 @@ def auth():
     elif action == 'login':
         c.execute("SELECT password FROM users WHERE username=?", (username,))
         result = c.fetchone()
+        conn.close()
         if result and check_password_hash(result[0], password):
             session['username'] = username
-            # 🔹 генерируем токен при логине
-            token = secrets.token_hex(16)
-            c.execute("INSERT OR REPLACE INTO tokens (username, token) VALUES (?, ?)", (username, token))
-            conn.commit()
-            session['token'] = token
-            conn.close()
             return redirect(url_for('home'))
         else:
-            conn.close()
             flash("Неверный логин или пароль")
             return redirect(url_for('start'))
     else:
@@ -130,23 +112,7 @@ def my_orders():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    session.pop('token', None)
     return redirect(url_for('start'))
-
-# ===== API для токена shop =====
-@app.route('/api/get_token')
-def get_token():
-    if 'username' not in session:
-        return jsonify({"error": "not logged in"}), 401
-    username = session['username']
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT token FROM tokens WHERE username=?", (username,))
-    row = c.fetchone()
-    conn.close()
-    if row:
-        return jsonify({"token": row[0]})
-    return jsonify({"error": "token not found"}), 404
 
 # ===== API для уведомлений =====
 @app.route('/api/get_unseen_count')
@@ -204,11 +170,13 @@ async def save_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     c.execute("INSERT INTO notifications (message) VALUES (?)", (text,))
     notif_id = c.lastrowid
 
+    # создаём для всех пользователей отметку непрочитанного
     c.execute("SELECT username FROM users")
     users = [row[0] for row in c.fetchall()]
     for user in users:
         c.execute("INSERT INTO user_notifications (username, notification_id, seen) VALUES (?, ?, 0)", (user, notif_id))
 
+    # оставляем только последние 5 сообщений
     c.execute("""
         DELETE FROM notifications
         WHERE id NOT IN (SELECT id FROM notifications ORDER BY timestamp DESC LIMIT 5)
@@ -223,6 +191,7 @@ def run_bot():
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, save_message))
     print("Бот запущен!")
 
+    # Создаём event loop для потока
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     loop.run_until_complete(application.run_polling())
@@ -231,4 +200,4 @@ def run_bot():
 if __name__ == '__main__':
     bot_thread = threading.Thread(target=run_bot)
     bot_thread.start()
-    app.run(host='0.0.0.0', port=80, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
