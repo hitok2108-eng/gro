@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контакты — Обменник</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+  :root {
+    --neon-cyan: #00FFFF;
+    --neon-pink: #FF00FF;
+    --dark-bg: #0a0a0f;
+    --text-light: #e0e0e0;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #0a0a0f, #1a1a2e);
+    color: var(--text-light);
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 50px auto;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 0 20px;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background: linear-gradient(145deg, #1a1a2e, #0d0d1f);
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,255,255,0.3), 0 0 40px rgba(255,0,255,0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+
+  .card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 30px rgba(0,255,255,0.6), 0 0 60px rgba(255,0,255,0.5);
+  }
+
+  .card img {
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 0;
+    border-right: 2px solid var(--neon-cyan);
+    transition: transform 0.3s;
+  }
+
+  .card:hover img {
+    transform: scale(1.05);
+  }
+
+  .card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .card-content h2 {
+    color: var(--neon-cyan);
+    font-size: 1.5rem;
+    margin: 0;
+    text-shadow: 0 0 8px var(--neon-cyan), 0 0 20px var(--neon-pink);
+  }
+
+  .button {
+    display: inline-block;
+    padding: 12px 25px;
+    background: linear-gradient(45deg, var(--neon-cyan), var(--neon-pink));
+    color: #0a0a0f;
+    font-weight: bold;
+    border-radius: 15px;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 0 10px var(--neon-cyan), 0 0 20px var(--neon-pink);
+    transition: transform 0.3s, box-shadow 0.3s;
+    font-size: 1rem;
+    max-width: fit-content;
+  }
+
+  .button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px var(--neon-cyan), 0 0 40px var(--neon-pink);
+    color: #fff;
+  }
+
+  @media (max-width:768px) {
+    .card {
+      flex-direction: column;
+      text-align: center;
+    }
+    .card img {
+      width: 100%;
+      height: auto;
+      border-right: none;
+      border-bottom: 2px solid var(--neon-cyan);
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+    <img src="https://i.ibb.co/kbKvr2K/IMG-20251222-231649-778.jpg" alt="Контакты">
+    <div class="card-content">
+      <h2>💬 Чат</h2>
+      <a href="https://t.me/SCIMBMD" target="_blank" class="button">@SCIMBMD</a>
+      <h2>📝 Оператор</h2>
+      <a href="https://t.me/LTCSCRG" target="_blank" class="button">@LTCSCRG</a>
+      <h2>Отзывы</h2>
+      <a href="https://t.me/+rmKk5O54xI1mZGRi" target="_blank" class="button">Смотреть отзывы в Telegram</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>КриптоДетка — обмен криптовалюты</title>
+
+<style>
+/* Подключение шрифта Orbitron напрямую через @import */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap');
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #0d0d0d;
+    color: #eaeaea;
+}
+
+/* ---------------- Герой блок ---------------- */
+.hero {
+    padding: 25px 20px; /* уменьшена высота блока */
+    text-align: center;
+    background: linear-gradient(135deg, #111, #181818);
+    border-bottom: 1px solid #222;
+    animation: fadeIn 1.4s ease-in-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero:before {
+    content: "";
+    position: absolute;
+    width: 120%;
+    height: 2px;
+    background: #ff007f;
+    top: 0;
+    left: -10%;
+    box-shadow: 0 0 15px #ff007f;
+    animation: moveLine 5s linear infinite;
+}
+
+@keyframes moveLine {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.hero h1 {
+    font-family: 'Orbitron', sans-serif; /* теперь точно шрифт Orbitron */
+    font-size: 32px;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 0 12px #ff007f;
+}
+
+.hero p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #ccc;
+}
+
+.hero .btn-hero {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 12px 24px;
+    background: #ff007f;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: bold;
+    box-shadow: 0 0 15px #ff007f;
+    transition: .25s;
+}
+
+.hero .btn-hero:hover {
+    background: #e00072;
+    box-shadow: 0 0 20px #ff007f;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------- Контент ---------------- */
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 25px 20px;
+}
+
+.section {
+    background: #1a1a1a;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 30px;
+    border: 1px solid #222;
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #fff;
+    border-left: 4px solid #ff007f;
+    padding-left: 10px;
+}
+
+p {
+    line-height: 1.6;
+    color: #ccc;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    background: #ff007f;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    margin-top: 10px;
+    font-weight: bold;
+    transition: 0.2s;
+    box-shadow: 0 0 10px #ff007f;
+}
+
+.btn:hover {
+    background: #e00072;
+    box-shadow: 0 0 14px #ff007f;
+}
+
+footer {
+    background: #0f0f0f;
+    color: #777;
+    text-align: center;
+    padding: 15px;
+    margin-top: 20px;
+    border-top: 1px solid #222;
+}
+
+@media (max-width: 600px) {
+    .hero h1 {
+        font-size: 28px;
+    }
+    .hero p {
+        font-size: 13px;
+    }
+    h2 {
+        font-size: 20px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="hero">
+    <h1>КриптоДетка</h1>
+    <p>Моментальный обмен криптовалюты 24/7</p>    
+</div>
+
+<div class="container">
+
+    <div class="section">
+        <h2>О нас</h2>
+        <p>КриптоДетка — это быстрый и надёжный обмен криптовалют. Работаем 24/7, прозрачные курсы и моментальные выплаты.</p>
+        <a class="btn" href="https://t.me/KriptoDetka0001">Начать обмен</a>
+    </div>
+
+    <div class="section">
+        <h2>Контакты</h2>
+        <p>Telegram: @KriptoDetka0001</p>
+        <p>Резерв: @KriptoDetka0001</p>
+        <p>Отзывы: support@example.com</p>
+    </div>
+    
+    <div class="section">
+        <h2>Контакты</h2>
+        <p>Всегда актуальные методы оплаты лучший курс на связи 24/7 ваша КриптоДетка</p>
+        <p>Актуальные контакты на этом сайте </p>
+        
+    </div>
+
+</div>
+
+<footer>
+    © 2025 КриптоДетка
+</footer>
+
+</body>
+</html>

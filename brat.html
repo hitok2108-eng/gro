@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Контакты — LTC Exchange</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+                url("https://i.ibb.co/C3FzZ4sm/IMG-20251222-225731-575.jpg")
+                center / cover no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+        }
+
+        /* ❗ Полностью прозрачный контейнер */
+        .container {
+            background: transparent;
+            border-radius: 22px;
+            padding: 40px;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #00ff99;
+            margin-bottom: 6px;
+            text-shadow:
+                0 0 10px rgba(0,255,153,0.9),
+                0 0 25px rgba(0,255,153,0.6);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #f0f0f0;
+            margin-bottom: 30px;
+            text-shadow: 0 0 6px rgba(0,0,0,0.9);
+        }
+
+        .contact-item {
+            background: transparent;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(0,255,153,0.35);
+            transition: 0.3s;
+        }
+
+        .contact-item:hover {
+            background: rgba(0,255,153,0.15);
+            transform: scale(1.05);
+        }
+
+        .contact-item span {
+            display: block;
+            font-size: 13px;
+            color: #eaeaea;
+            margin-bottom: 6px;
+            text-shadow: 0 0 5px rgba(0,0,0,0.9);
+        }
+
+        .contact-item a {
+            color: #00ff99;
+            text-decoration: none;
+            font-size: 18px;
+            font-weight: 700;
+            text-shadow:
+                0 0 8px rgba(0,255,153,0.9),
+                0 0 15px rgba(0,255,153,0.6);
+        }
+
+        .status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #ffcc66;
+            font-weight: 600;
+            text-shadow: 0 0 6px rgba(0,0,0,0.9);
+        }
+
+        .info {
+            margin-top: 25px;
+            font-size: 13px;
+            color: #f5f5f5;
+            line-height: 1.6;
+            text-shadow: 0 0 6px rgba(0,0,0,0.9);
+        }
+
+        footer {
+            margin-top: 25px;
+            font-size: 12px;
+            color: #eee;
+            text-shadow: 0 0 6px rgba(0,0,0,0.9);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="logo">LTC EXCHANGE</div>
+    <div class="subtitle">Litecoin • LEI • Обнал</div>
+
+    <div class="contact-item">
+        <span>Telegram оператор</span>
+        <a href="https://t.me/KatushaLtc" target="_blank">Связаться</a>
+    </div>
+
+    <div class="contact-item">
+        <span>Отзывы и информация</span>
+        <a href="https://t.me/groupkatusha" target="_blank">Telegram канал</a>
+    </div>
+
+    <div class="status">🟢 Работаем ежедневно</div>
+
+    <div class="info">
+        Обмен Litecoin (LTC)<br>
+        LEI • Наличный обнал<br>
+        Быстро • Без лишних вопросов
+    </div>
+
+    <footer>
+        © 2025 LTC Exchange
+    </footer>
+</div>
+
+</body>
+</html>
