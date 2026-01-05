@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Green Swap</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      font-family: Arial, sans-serif;
+      color: #fff;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      height: 55px;
+      background: #1f7a1f;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+    }
+
+    .site-title {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-buttons a {
+      text-decoration: none;
+      color: #1f7a1f;
+      background: #fff;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    /* ===== FOTO ===== */
+    .hero {
+      position: relative;
+      background: #000;
+    }
+
+    .hero img {
+      width: 100%;
+      height: auto;
+      display: block; /* убирает любые зазоры */
+    }
+
+    /* ===== CONTENT UNDER FOTO ===== */
+    .content {
+      padding: 25px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .content ul {
+      list-style: none;
+      margin-bottom: 20px;
+    }
+
+    .content li {
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+
+    .content li::before {
+      content: "•";
+      color: #1f7a1f;
+      margin-right: 10px;
+      font-weight: bold;
+    }
+
+    .warning {
+      border-left: 4px solid #1f7a1f;
+      padding-left: 15px;
+      font-size: 14px;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    /* адаптив */
+    @media (max-width: 768px) {
+      header {
+        height: 50px;
+      }
+
+      .site-title {
+        font-size: 18px;
+      }
+
+      .content {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="site-title">Green Swap</div>
+    <div class="nav-buttons">
+      <a href="https://t.me/greenswapmd">Оператор</a>
+      <a href="https://t.me/greenswwap">Отзывы</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <img src="https://i.ibb.co/N6tx97VZ/IMG-20260104-192844-564.jpg" alt="photo">
+  </section>
+
+  <section class="content">
+    <ul>
+      <li>лучший курс</li>
+      <li>актуальные реквизиты</li>
+      <li>быстрый обмен</li>
+      <li>отзывчивый оператор</li>
+      <li>всегда на связи 24/7</li>
+    </ul>
+
+    <div class="warning">
+      Если нас удалят из контактов или вы потеряете контакты,  
+      на этом сайте в первую очередь будут появляться мои актуальные контакты.
+    </div>
+  </section>
+
+</body>
+</html>
