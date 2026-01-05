@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+    }
+
+    /* ===== HEADER ===== */
+    header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      padding: 10px 20px;
+    }
+
+    .logo img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* ===== GIF ===== */
+    .hero-gif img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ===== BUTTONS ===== */
+    .buttons {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 200px;
+      margin: 0 auto;
+    }
+
+    .buttons a {
+      text-decoration: none;
+      text-align: center;
+      background: #000;
+      color: #fff;
+      padding: 14px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: bold;
+
+      border: 1px solid rgba(255, 255, 255, 0.6); /* белая обводка */
+    }
+
+    .buttons a:hover {
+      opacity: 0.95;
+      border-color: #fff;
+    }
+
+    /* ===== TEXT ===== */
+    .content {
+      padding: 25px 20px 40px;
+      max-width: 900px;
+      margin: 0 auto;
+      line-height: 1.6;
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    .content p {
+      margin-bottom: 18px;
+    }
+
+    .highlight {
+      border-left: 4px solid #1f7a1f;
+      padding-left: 15px;
+    }
+
+    .heart {
+      color: #ff5c8a;
+    }
+
+    /* ===== ADAPTIVE ===== */
+    @media (max-width: 768px) {
+      .buttons {
+        padding: 15px;
+      }
+
+      .content {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      <img src="https://i.ibb.co/jvtw0H8B/PRopaganda-20260103-193102-0000.png" alt="logo">
+    </div>
+  </header>
+
+  <section class="hero-gif">
+    <img src="https://i.ibb.co/dJVkqgcT/Financial-Basics.gif" alt="animation">
+  </section>
+
+  <!-- КНОПКИ -->
+  <section class="buttons">
+    <a href="#">Оператор</a>
+    <a href="#">БОТ</a>
+    <a href="#">Отзывы</a>
+  </section>
+
+  <!-- ТЕКСТ -->
+  <section class="content">
+    <p>
+      Товар высшего сорта, работаем по Молдове, вежливый оператор,  
+      мы на связи 24/7. Ваши отзывы говорят о нашем качестве работы
+      <span class="heart">♥️</span>
+    </p>
+
+    <p class="highlight">
+      Если вы потеряли наш контакт или нас удалили в Telegram,  
+      на этом сайте первыми появятся наши актуальные контакты.
+    </p>
+
+    <p>
+      Мы в поисках сотрудников — высокая оплата, возможность карьерного роста.  
+      Писать оператору.
+    </p>
+
+    <p class="highlight">
+      Если вы потеряли наш контакт или нас удалили в Telegram,  
+      на этом сайте первыми появятся наши актуальные контакты.
+    </p>
+  </section>
+
+</body>
+</html>
