@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Site</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Фон */
+.bg {
+  position: fixed;
+  inset: 0;
+  background: url("https://i.ibb.co/XfgKkGDW/image.gif") no-repeat center center;
+  background-size: contain;
+  background-color: #000;
+  z-index: -1;
+}
+
+/* Верхняя панель */
+.header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  padding: 14px 20px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.nav {
+  display: flex;
+  gap: 15px;
+}
+
+.nav a {
+  text-decoration: none;
+  color: #fff;
+  border: 1.5px solid #fff;
+  padding: 9px 18px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.nav a:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* Бегущая строка */
+.marquee {
+  width: 100%;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.marquee span {
+  display: inline-block;
+  padding-left: 100%;
+  white-space: nowrap;
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 1px;
+  animation: run 12s linear infinite;
+}
+
+@keyframes run {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-100%); }
+}
+
+/* Тексты поверх гифки */
+.overlay-text {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.text-box {
+  max-width: 45%;
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  opacity: 0;
+  animation: fadeIn 2s ease forwards;
+}
+
+.text-left {
+  text-align: left;
+  animation-delay: 0.5s;
+}
+
+.text-right {
+  text-align: right;
+  animation-delay: 1.2s;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Секция "О НАС" */
+.about {
+  margin-top: 100vh;
+  padding: 80px 20px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  text-align: center;
+}
+
+.about h2 {
+  font-size: 28px;
+  letter-spacing: 3px;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+}
+
+.about p {
+  max-width: 700px;
+  margin: 0 auto;
+  font-size: 16px;
+  line-height: 1.7;
+  letter-spacing: 1px;
+  opacity: 0.85;
+}
+
+/* Адаптация */
+@media (max-width: 768px) {
+  .overlay-text {
+    flex-direction: column;
+    gap: 20px;
+    text-align: center;
+  }
+
+  .text-box {
+    max-width: 100%;
+    font-size: 16px;
+  }
+
+  .text-left,
+  .text-right {
+    text-align: center;
+  }
+
+  .about h2 {
+    font-size: 24px;
+  }
+
+  .about p {
+    font-size: 15px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="header">
+  <div class="nav">
+    <a href="#">Оператор</a>
+    <a href="#">Отзывы</a>
+    <a href="#">Группа</a>
+  </div>
+
+  <div class="marquee">
+    <span>Люблю своих клиентов ❤️ Люблю своих клиентов ❤️ Люблю своих клиентов ❤️</span>
+  </div>
+</div>
+
+<div class="overlay-text">
+  <div class="text-box text-left">
+    Работаем для вас 24/7
+  </div>
+
+  <div class="text-box text-right">
+    Подбираем актуальные реквизиты для вас
+  </div>
+</div>
+
+<section class="about">
+  <h2>О НАС</h2>
+  <p>
+    Мы работаем круглосуточно и всегда на связи.  
+    Наша цель — предоставить стабильный сервис, актуальные реквизиты и
+    максимально комфортное взаимодействие для каждого клиента.
+    Надёжность, скорость и уважение — наш основной принцип.
+  </p>
+</section>
+
+</body>
+</html>
