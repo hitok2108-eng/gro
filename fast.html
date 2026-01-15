@@ -93,6 +93,9 @@
     }
 
     .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       height: 48px;
       border: 1px solid #fff;
       border-radius: 999px;
@@ -101,7 +104,9 @@
       font-size: 13px;
       letter-spacing: 2px;
       text-transform: uppercase;
+      text-decoration: none;
       cursor: pointer;
+      transition: background 0.3s;
     }
 
     .btn:hover {
@@ -152,10 +157,10 @@
 </div>
 
 <div class="buttons">
-  <button class="btn">ОПЕРАТОР</button>
-  <button class="btn">БОТ</button>
-  <button class="btn">ОТЗЫВЫ</button>
-  <button class="btn">ГРУППА</button>
+  <a href="https://example.com/operator" class="btn">ОПЕРАТОР</a>
+  <a href="https://example.com/bot" class="btn">БОТ</a>
+  <a href="https://example.com/reviews" class="btn">ОТЗЫВЫ</a>
+  <a href="https://example.com/group" class="btn">ГРУППА</a>
 </div>
 
 <div class="about">
