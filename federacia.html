@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ОПТ / РОЗДНИЦА</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #050505;
+  color: #fff;
+}
+
+/* HEADER */
+header {
+  background: #111;
+  padding: 10px 20px;
+}
+
+.header-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-img {
+  height: 45px;
+  border-radius: 10px;
+}
+
+.header-text {
+  font-size: 20px;
+  font-weight: bold;
+  background: linear-gradient(90deg, #ccc, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* БЕГУЩАЯ СТРОКА */
+.ticker {
+  width: 100%;
+  overflow: hidden;
+  background: #050505;
+  border-top: 1px solid #222;
+  border-bottom: 1px solid #222;
+}
+
+.ticker-track {
+  white-space: nowrap;
+  font-size: 12px;
+  padding: 8px 0;
+  position: relative;
+  left: 100vw;
+}
+
+/* КНОПКИ */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 5px;
+}
+
+.btn {
+  padding: 3px 7px;
+  border: 2px solid #fff;
+  border-radius: 12px;
+  background: transparent;
+  color: #fff;
+  font-size: 10px;
+  text-decoration: none;
+}
+
+/* ПЕРЕКЛЮЧАТЕЛЬ */
+.switcher {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 18px 0;
+}
+
+.switcher span {
+  font-size: 14px;
+  cursor: pointer;
+  padding-bottom: 5px;
+  color: #888;
+}
+
+.switcher .active {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+}
+
+/* КОНТЕНТ */
+.content {
+  max-width: 360px;
+  margin: 0 auto;
+  padding: 10px;
+  text-align: center;
+}
+
+.block {
+  display: none;
+}
+
+.block.active {
+  display: block;
+}
+
+h3 {
+  margin: 16px 0 8px;
+  font-size: 14px;
+}
+
+/* ФОТО ПОД ЗАГОЛОВКАМИ */
+.section-img {
+  width: 100%;
+  max-width: 220px;
+  margin: 6px auto 10px;
+  display: block;
+}
+
+/* СПИСКИ */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 18px 0;
+  font-size: 12px;
+  color: #ccc;
+}
+
+ul li {
+  margin-bottom: 6px;
+  line-height: 1.45;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="header-container">
+    <img src="https://i.ibb.co/8DJxHSxb/IMG-20260117-175102-866.png" class="logo-img">
+    <span class="header-text">FEDERATION</span>
+  </div>
+</header>
+
+<div class="ticker">
+  <div class="ticker-track" id="tickerText"></div>
+</div>
+
+<!-- КНОПКИ С ССЫЛКАМИ -->
+<div class="button-container">
+  <a href="https://t.me/BlackFederationadmin1" class="btn">Оператор</a>
+  <a href="https://t.me/BlackFederation_Bot" class="btn">Бот</a>
+  <a href="https://t.me/BlackFederationchat" class="btn">Группа</a>
+  <a href="https://t.me/+CYvdzUZ1grRlNjI5" class="btn">Отзывы</a>
+  <a href="https://legalizer.bz/threads/black%E2%9A%AB%EF%B8%8Ffederation-%D0%9E%D0%9F%D0%A2%D0%9E%D0%92%D0%AB%D0%99-%D0%9C%D0%90%D0%93%D0%90%D0%97%D0%98%D0%9D-%D0%9D%D0%90-%D0%A2%D0%95%D0%A0%D0%98%D0%A2%D0%9E%D0%A0%D0%98%D0%98-%D0%9C%D0%9E%D0%9B%D0%94%D0%9E%D0%92%D0%AB.692373/" class="btn">Леголайзер</a>
+</div>
+
+<div class="switcher">
+  <span class="active" onclick="showBlock('opt', this)">ОПТ</span>
+  <span onclick="showBlock('retail', this)">РОЗНИЦА</span>
+</div>
+
+<div class="content">
+
+  <!-- ОПТ -->
+  <div class="block active" id="opt">
+
+    <h3>Мефедрон</h3>
+    <img class="section-img" src="https://i.ibb.co/tTfCwqdF/1000051154-removebg-preview.png">
+    <ul>
+      <li>1кг - 7.2$</li>
+      <li>500г - 7.5$</li>
+      <li>300г - 8$</li>
+      <li>200г - 9$</li>
+    </ul>
+
+    <h3>A-PVP</h3>
+    <img class="section-img" src="https://i.ibb.co/Cpc2McfS/1000051155-removebg-preview.png">
+    <ul>
+      <li>1кг - 6.6$</li>
+      <li>500г - 7$</li>
+      <li>300г - 8$</li>
+      <li>200г - 9$</li>
+    </ul>
+
+    <h3>ГАШИШЬ</h3>
+    <img class="section-img" src="https://i.ibb.co/v6Qvpgm7/1000051156-removebg-preview.png">
+    <ul>
+      <li>Пусто</li>
+      <li>Пусто</li>
+      <li>Пусто</li>
+    </ul>
+
+  </div>
+
+  <!-- РОЗДНИЦА -->
+  <div class="block" id="retail">
+
+    <h3>МЕФ</h3>
+    <img class="section-img" src="https://i.ibb.co/gMY24pdK/1000051161-removebg-preview.png">
+    <ul>
+      <li>Пусто</li>
+      <li>Пусто</li>
+      <li>Пусто</li>
+      <li>Пусто</li>
+    </ul>
+
+    <h3>A-PVP</h3>
+    <img class="section-img" src="https://i.ibb.co/GfrkxqBn/1000051162-removebg-preview.png">
+    <ul>
+      <li>05г - 19$</li>
+      <li>1г - 27$</li>
+      <li>2г - 44$</li>
+      <li>5г - 80$</li>
+    </ul>
+
+    <h3>ГАШИШЬ</h3>
+    <img class="section-img" src="https://i.ibb.co/TxfmjvjP/1000051165-removebg-preview.png">
+    <ul>
+      <li>Пусто</li>
+      <li>Пусто</li>
+      <li>Пусто</li>
+    </ul>
+
+  </div>
+
+</div>
+
+<script>
+function showBlock(id, el) {
+  document.querySelectorAll('.block').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.switcher span').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+const texts = [
+  "в лесу родилась ёлочка",
+  "в лесу родилась ёлочка 2"
+];
+
+const ticker = document.getElementById("tickerText");
+let index = 0;
+
+function runTicker() {
+  ticker.textContent = texts[index];
+  ticker.style.transition = "none";
+  ticker.style.left = "100vw";
+  ticker.offsetHeight;
+  ticker.style.transition = "left 10s linear";
+  ticker.style.left = `-${ticker.offsetWidth}px`;
+  index = (index + 1) % texts.length;
+  setTimeout(runTicker, 12000);
+}
+
+runTicker();
+</script>
+
+</body>
+</html>

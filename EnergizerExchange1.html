@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Контакты</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #050505;
+  color: #fff;
+}
+
+/* HEADER */
+header {
+  background: #111;
+  padding: 15px 20px;
+  text-align: center;
+}
+
+.contact-title {
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.contact-title .blue {
+  background: linear-gradient(90deg, #7fdbff, #4da6ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: moveBlue 3s ease infinite alternate;
+}
+
+.contact-title .red {
+  background: linear-gradient(90deg, #ff9a9a, #ff6b6b);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: moveRed 3s ease infinite alternate;
+}
+
+@keyframes moveBlue {
+  0% { background-position: 0% }
+  100% { background-position: 100% }
+}
+
+@keyframes moveRed {
+  0% { background-position: 100% }
+  100% { background-position: 0% }
+}
+
+/* GIF */
+.gif-box {
+  display: flex;
+  justify-content: center;
+  margin: 18px 0 12px;
+}
+
+.gif-box img {
+  width: 110px;
+}
+
+/* КНОПКИ */
+.button-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+}
+
+.btn {
+  width: 75%;
+  max-width: 320px;
+  padding: 10px 0;
+  border: 2px solid #fff;
+  border-radius: 16px;
+  background: transparent;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  background: rgba(255,255,255,0.1);
+  border-color: #fbc531;
+  color: #fbc531;
+}
+
+/* О НАС */
+.about-title {
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  margin: 20px 0 10px;
+  background: linear-gradient(90deg, #fff, #ddd, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 2s infinite linear;
+}
+
+@keyframes shine {
+  0% { background-position: -200% }
+  100% { background-position: 200% }
+}
+
+/* ТЕКСТ О НАС */
+.about-text {
+  max-width: 340px;
+  margin: 0 auto 25px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.55;
+  color: #ccc;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <span class="contact-title">
+    <span class="blue">Energizer</span><span class="red">Exchange</span>
+  </span>
+</header>
+
+<div class="gif-box">
+  <img src="https://i.ibb.co/PvtHdSz9/image.gif" alt="icon">
+</div>
+
+<div class="button-container">
+  <button class="btn">Оператор</button>
+  <button class="btn">Отзывы</button>
+  <button class="btn">Группа</button>
+</div>
+
+<h2 class="about-title">О НАС</h2>
+
+<div class="about-text">
+  Быстрый и надёжный обмен 24/7.<br>
+  Актуальные реквизиты подбираем специально для вас.<br><br>
+  На этом сайте вы всегда найдёте наши актуальные реквизиты.
+</div>
+
+</body>
+</html>
