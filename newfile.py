@@ -1,51 +1,59 @@
-from flask import Flask, render_template, request, redirect, session, url_for, flash, jsonify
-import sqlite3
+from flask import Flask, render_template, request, redirect, session, url_for, flash
+import pymysql
+import time
 from werkzeug.security import generate_password_hash, check_password_hash
-import threading
-import asyncio
-from telegram import Update
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
+from flask_socketio import SocketIO, emit, join_room
 
-# ===== Настройки =====
+# ================== APP INIT ==================
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
-DB_PATH = 'users.db'
-BOT_TOKEN = "8415935436:AAFjZ1fS0XKIZhpHBSDOfe6p3suQMA2c0fA"
 
-# ===== Инициализация базы =====
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
+
+# ================== MYSQL ==================
+
+def get_db():
+    return pymysql.connect(
+        host="hitok.mysql.pythonanywhere-services.com",
+        user="hitok",
+        password="0553249177aA",
+        database="hitok$default",
+        cursorclass=pymysql.cursors.DictCursor
+    )
+
 def init_db():
-    conn = sqlite3.connect(DB_PATH)
+
+    conn = get_db()
     c = conn.cursor()
+
     c.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
+    CREATE TABLE IF NOT EXISTS users (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(100) UNIQUE,
+        password TEXT
+    )
     """)
+
     c.execute("""
-        CREATE TABLE IF NOT EXISTS notifications (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            message TEXT NOT NULL,
-            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
+    CREATE TABLE IF NOT EXISTS messages(
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        chat_id VARCHAR(100),
+        user VARCHAR(100),
+        text TEXT,
+        image LONGTEXT,
+        reply TEXT,
+        time BIGINT,
+        INDEX chat_time(chat_id,time)
+    )
     """)
-    # Новая таблица для отметки прочитанного
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS user_notifications (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT NOT NULL,
-            notification_id INTEGER NOT NULL,
-            seen INTEGER DEFAULT 0,
-            FOREIGN KEY (notification_id) REFERENCES notifications(id)
-        )
-    """)
+
     conn.commit()
     conn.close()
 
 init_db()
 
-# ===== Flask маршруты =====
+# ================== AUTH ==================
+
 @app.route('/')
 def start():
     if 'username' in session:
@@ -60,144 +68,268 @@ def home():
 
 @app.route('/auth', methods=['POST'])
 def auth():
+
     action = request.form.get('action')
     username = request.form.get('username')
     password = request.form.get('password')
     password2 = request.form.get('password2')
 
-    conn = sqlite3.connect(DB_PATH)
+    conn = get_db()
     c = conn.cursor()
+
     if action == 'register':
+
         if password != password2:
             flash("Пароли не совпадают")
             return redirect(url_for('start'))
+
         try:
             hashed = generate_password_hash(password)
-            c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, hashed))
+
+            c.execute(
+                "INSERT INTO users (username,password) VALUES (%s,%s)",
+                (username,hashed)
+            )
+
             conn.commit()
+
             session['username'] = username
             return redirect(url_for('home'))
-        except sqlite3.IntegrityError:
-            flash("Пользователь с таким именем уже существует")
+
+        except:
+            flash("Пользователь существует")
             return redirect(url_for('start'))
+
         finally:
             conn.close()
+
     elif action == 'login':
-        c.execute("SELECT password FROM users WHERE username=?", (username,))
+
+        c.execute("SELECT password FROM users WHERE username=%s",(username,))
         result = c.fetchone()
+
         conn.close()
-        if result and check_password_hash(result[0], password):
+
+        if result and check_password_hash(result["password"], password):
+
             session['username'] = username
             return redirect(url_for('home'))
+
         else:
-            flash("Неверный логин или пароль")
+
+            flash("Неверные данные")
             return redirect(url_for('start'))
-    else:
-        conn.close()
-        flash("Неизвестное действие")
+
+# ================== CHATS ==================
+
+@app.route('/chats')
+def chats():
+    if 'username' not in session:
         return redirect(url_for('start'))
+    return render_template('chats.html', username=session['username'])
+
+@app.route('/go_chats')
+def go_chats():
+    if 'username' not in session:
+        return redirect(url_for('start'))
+    return redirect(url_for('chats'))
+
+# ================== OLD ROUTES (ВСЕ СОХРАНЕНЫ) ==================
 
 @app.route('/shop')
 def shop():
     if 'username' not in session:
         return redirect(url_for('start'))
-    return render_template('shop.html')
+    return render_template('mario.html')
+
+@app.route('/mario')
+def mario():
+    return render_template('mario.html')
+
+@app.route('/samurai1')
+def samurai1():
+    return render_template('samurai1.html')
+
+@app.route('/fast')
+def fast():
+    return render_template('fast.html')
+
+@app.route('/federacia')
+def federacia():
+    return render_template('federacia.html')
+
+@app.route('/EnergizerExchange1')
+def EnergizerExchange1():
+    return render_template('EnergizerExchange1.html')
+
+@app.route('/propoganda')
+def propoganda():
+    return render_template('propoganda.html')
+
+@app.route('/fa1')
+def fa1():
+    return render_template('fa1.html')
+
+@app.route('/barselona')
+def barselona():
+    return render_template('barselona.html')
+
+@app.route('/mah')
+def mah():
+    return render_template('mah.html')
+
+@app.route('/green2')
+def green2():
+    return render_template('green2.html')
+
+@app.route('/brat')
+def brat():
+    return render_template('brat.html')
+
+@app.route('/katia')
+def katia():
+    return render_template('katia.html')
+
+@app.route('/detka')
+def detka():
+    return render_template('detka.html')
+
+@app.route('/scrudj')
+def scrudj():
+    return render_template('scrudj.html')
 
 @app.route('/my_orders')
 def my_orders():
     if 'username' not in session:
         return redirect(url_for('start'))
-    return "<h2>Здесь пока будет ваша страница с заказами (заглушка)</h2>"
+    return "<h2>Заглушка заказов</h2>"
 
 @app.route('/logout')
 def logout():
     session.pop('username', None)
     return redirect(url_for('start'))
 
-# ===== API для уведомлений =====
-@app.route('/api/get_unseen_count')
-def get_unseen_count():
-    if 'username' not in session:
-        return jsonify({"count": 0})
-    username = session['username']
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("SELECT COUNT(*) FROM user_notifications WHERE username=? AND seen=0", (username,))
-    count = c.fetchone()[0]
-    conn.close()
-    return jsonify({"count": count})
+# ================== LOAD MORE HISTORY ==================
 
-@app.route('/api/get_notifications')
-def get_notifications():
-    if 'username' not in session:
-        return jsonify([])
-    username = session['username']
-    conn = sqlite3.connect(DB_PATH)
+@app.route("/load_more")
+def load_more():
+
+    chat_id = request.args.get("chatId")
+    before = request.args.get("before")
+
+    if not before:
+        return {"messages":[]}
+
+    before = int(before)
+
+    conn = get_db()
     c = conn.cursor()
+
     c.execute("""
-        SELECT n.id, n.message, un.seen
-        FROM notifications n
-        JOIN user_notifications un ON n.id = un.notification_id
-        WHERE un.username=?
-        ORDER BY n.timestamp DESC LIMIT 5
-    """, (username,))
-    notifications = [{"id": row[0], "message": row[1], "seen": row[2]} for row in c.fetchall()]
-    conn.close()
-    return jsonify(notifications)
+        SELECT user,text,image,reply,time
+        FROM messages
+        WHERE chat_id=%s AND time < %s
+        ORDER BY time DESC
+        LIMIT 50
+    """,(chat_id,before))
 
-@app.route('/api/mark_seen', methods=['POST'])
-def mark_seen():
+    rows = c.fetchall()
+    conn.close()
+
+    rows.reverse()
+
+    return {"messages":rows}
+
+# ================== SOCKET ==================
+
+@socketio.on("connect")
+def connect():
     if 'username' not in session:
-        return jsonify({"status": "error"})
-    username = session['username']
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("UPDATE user_notifications SET seen=1 WHERE username=? AND seen=0", (username,))
-    conn.commit()
-    conn.close()
-    return jsonify({"status": "ok"})
+        return False
 
-# ===== Telegram-бот обработчики =====
-async def start_bot(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "Привет! Напиши мне любое сообщение — оно сохранится и появится в колокольчике на сайте."
+@socketio.on("join")
+def on_join(data):
+
+    chat_id = data["chatId"]
+    join_room(chat_id)
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT user,text,image,reply,time
+        FROM messages
+        WHERE chat_id=%s
+        ORDER BY time DESC
+        LIMIT 50
+    """,(chat_id,))
+
+    rows = c.fetchall()
+    conn.close()
+
+    rows.reverse()
+
+    emit("chat_history",{
+        "chatId":chat_id,
+        "messages":rows
+    })
+
+# ================== SEND MESSAGE ==================
+
+@socketio.on("send_message")
+def on_message(data):
+
+    if 'username' not in session:
+        return
+
+    chat_id = data["chatId"]
+
+    text = data.get("text") or ""
+
+    if len(text) > 500:
+        text = text[:500]
+
+    msg = {
+        "user":session['username'],
+        "text":text,
+        "image":data.get("image"),
+        "reply":data.get("reply"),
+        "time":data.get("time") or int(time.time()*1000)
+    }
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+    INSERT INTO messages(chat_id,user,text,image,reply,time)
+    VALUES(%s,%s,%s,%s,%s,%s)
+    """,(chat_id,msg["user"],msg["text"],msg["image"],msg["reply"],msg["time"]))
+
+    conn.commit()
+
+    # LIMIT 2000 сообщений на чат
+    c.execute("""
+    DELETE FROM messages
+    WHERE id NOT IN (
+        SELECT id FROM (
+            SELECT id FROM messages
+            WHERE chat_id=%s
+            ORDER BY time DESC
+            LIMIT 2000
+        ) t
     )
+    AND chat_id=%s
+    """,(chat_id,chat_id))
 
-async def save_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    c.execute("INSERT INTO notifications (message) VALUES (?)", (text,))
-    notif_id = c.lastrowid
-
-    # создаём для всех пользователей отметку непрочитанного
-    c.execute("SELECT username FROM users")
-    users = [row[0] for row in c.fetchall()]
-    for user in users:
-        c.execute("INSERT INTO user_notifications (username, notification_id, seen) VALUES (?, ?, 0)", (user, notif_id))
-
-    # оставляем только последние 5 сообщений
-    c.execute("""
-        DELETE FROM notifications
-        WHERE id NOT IN (SELECT id FROM notifications ORDER BY timestamp DESC LIMIT 5)
-    """)
     conn.commit()
     conn.close()
-    await update.message.reply_text("Сообщение сохранено!")
 
-def run_bot():
-    application = Application.builder().token(BOT_TOKEN).build()
-    application.add_handler(CommandHandler("start", start_bot))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, save_message))
-    print("Бот запущен!")
+    emit("new_message",{
+        "chatId":chat_id,
+        "message":msg
+    },to=chat_id)
 
-    # Создаём event loop для потока
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    loop.run_until_complete(application.run_polling())
+# ================== START ==================
 
-# ===== Запуск Flask + бота =====
 if __name__ == '__main__':
-    bot_thread = threading.Thread(target=run_bot)
-    bot_thread.start()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    socketio.run(app,host='0.0.0.0',port=5001,debug=False)
