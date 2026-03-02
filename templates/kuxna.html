@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Кухня — Контакты</title>
+
+<style>
+
+body{
+margin:0;
+font-family:Arial;
+background:#0a0a0a;
+color:white;
+}
+
+/* HEADER */
+
+.site-header{
+display:flex;
+justify-content:center;
+align-items:center;
+padding:15px 20px;
+
+background:linear-gradient(180deg,#000,#1a0000);
+border-bottom:2px solid #ff3b3b;
+
+box-shadow:0 0 25px rgba(255,60,60,0.5);
+}
+
+.logo img{
+height:60px;
+filter:drop-shadow(0 0 12px red);
+}
+
+/* CONTACT PAGE */
+
+.contacts{
+text-align:center;
+padding:40px 10px;
+}
+
+.contacts h1{
+font-size:32px;
+margin-bottom:25px;
+text-shadow:0 0 10px red;
+}
+
+/* BUTTONS */
+
+.contact-buttons{
+display:flex;
+justify-content:center;
+gap:12px;
+}
+
+.contact-btn{
+
+padding:10px 18px;
+font-size:15px;
+font-weight:bold;
+
+background:#1a0000;
+border:2px solid #ff3b3b;
+border-radius:30px;
+
+color:white;
+text-decoration:none;
+
+transition:0.3s;
+
+box-shadow:0 0 8px rgba(255,0,0,0.4);
+}
+
+.contact-btn:hover{
+background:#ff3b3b;
+box-shadow:0 0 20px red;
+transform:scale(1.05);
+}
+
+/* ABOUT */
+
+.about{
+max-width:800px;
+margin:60px auto;
+text-align:center;
+padding:0 20px;
+}
+
+.about h2{
+font-size:30px;
+margin-bottom:20px;
+text-shadow:0 0 10px red;
+}
+
+.about p{
+font-size:16px;
+line-height:1.6;
+color:#ddd;
+}
+
+/* PRODUCTS */
+
+.products{
+text-align:center;
+margin-top:60px;
+padding-bottom:80px;
+}
+
+.products h2{
+font-size:30px;
+margin-bottom:40px;
+text-shadow:0 0 10px red;
+}
+
+.product-grid{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+}
+
+/* CARD */
+
+.card{
+
+width:220px;
+padding:25px;
+
+background:#1a0000;
+
+border:2px solid #ff3b3b;
+border-radius:15px;
+
+box-shadow:0 0 15px rgba(255,0,0,0.4);
+
+transition:0.3s;
+
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 0 25px red;
+}
+
+.card h3{
+margin:0;
+font-size:20px;
+}
+
+.card p{
+font-size:14px;
+color:#ddd;
+margin-top:12px;
+line-height:1.4;
+text-align:center;
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+
+<div class="logo">
+<img src="https://i.ibb.co/J1bz2Ff/image.png">
+</div>
+
+</header>
+
+
+<section class="contacts">
+
+<h1>Связаться с нами</h1>
+
+<div class="contact-buttons">
+
+<a class="contact-btn" href="https://t.me/KUHNEA_OPER">Оператор</a>
+
+<a class="contact-btn" href="#">Чат</a>
+
+<a class="contact-btn" href="#">канал</a>
+  
+<a class="contact-btn" href="https://t.me/Kuhnea_robot">Бот</a>
+
+</div>
+
+</section>
+
+
+<section class="about">
+
+<h2>О нас</h2>
+
+<p>
+Кухня — это место где вкус встречается с качеством.  
+Мы готовим блюда из свежих ингредиентов и уделяем внимание каждой детали.  
+Наша цель — создать атмосферу уюта и настоящего удовольствия от Стаффa.  
+Каждое блюдо готовится с любовью и подается с заботой о Клиентах.  
+Попробуйте наш Стафф и почувствуйте настоящию эйфорию.
+</p>
+
+</section>
+
+
+<section class="products">
+
+<h2>Товары</h2>
+
+<div class="product-grid">
+
+<div class="card">
+<h3>A—PvP</h3>
+<p>
+Только качественный товар первого сорта другого на нашей кухни вы не встретите. Лучший в MD
+</p>
+</div>
+
+<div class="card">
+<h3>Гашишь</h3>
+<p>
+Убийственный сорт . Всегда на высоте . Приятен к употреблению.
+</p>
+</div>
+
+<div class="card">
+<h3>Бошки</h3>
+<p>
+Освежающие напитки которые отлично дополнят любое блюдо. 
+В ассортименте есть как холодные, так и горячие варианты.
+</p>
+</div>
+
+</div>
+
+</section>
+
+</body>
+</html>
