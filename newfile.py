@@ -13,8 +13,8 @@ app.secret_key = 'supersecretkey'
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # ================== MYSQL ==================
-
-#def get_db():
+""""
+def get_db():
     return pymysql.connect(
         host="hitok.mysql.pythonanywhere-services.com",
         user="hitok",
@@ -23,7 +23,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
         cursorclass=pymysql.cursors.DictCursor
     )
 
-#def init_db():
+def init_db():
 
     conn = get_db()
     c = conn.cursor()
@@ -53,7 +53,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
     conn.close()
 
 init_db()
-
+"""""
 # ================== AUTH ==================
 
 @app.route('/')
