@@ -13,47 +13,47 @@ app.secret_key = 'supersecretkey'
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # ================== MYSQL ==================
-""""
-def get_db():
-    return pymysql.connect(
-        host="hitok.mysql.pythonanywhere-services.com",
-        user="hitok",
-        password="0553249177aA",
-        database="hitok$default",
-        cursorclass=pymysql.cursors.DictCursor
-    )
 
-def init_db():
+#def get_db():
+#    return pymysql.connect(
+ #       host="hitok.mysql.pythonanywhere-services.com",
+ #       user="hitok",
+  #      password="0553249177aA",
+  #      database="hitok$default",
+    #    cursorclass=pymysql.cursors.DictCursor
+   # )
 
-    conn = get_db()
-    c = conn.cursor()
+#def init_db():
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        username VARCHAR(100) UNIQUE,
-        password TEXT
-    )
-    """)
+ #   conn = get_db()
+ #   c = conn.cursor()
 
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS messages(
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        chat_id VARCHAR(100),
-        user VARCHAR(100),
-        text TEXT,
-        image LONGTEXT,
-        reply TEXT,
-        time BIGINT,
-        INDEX chat_time(chat_id,time)
-    )
-    """)
+ #   c.execute("""
+ #   CREATE TABLE IF NOT EXISTS users (
+    #    id INT AUTO_INCREMENT PRIMARY KEY,
+   #     username VARCHAR(100) UNIQUE,
+    ##    password TEXT
+  #  )
+  #  """)
 
-    conn.commit()
-    conn.close()
+  #  c.execute("""
+  #  CREATE TABLE IF NOT EXISTS messages(
+  #      id INT AUTO_INCREMENT PRIMARY KEY,
+   #     chat_id VARCHAR(100),
+  #      user VARCHAR(100),
+   #     text TEXT,
+   #     image LONGTEXT,
+   #     reply TEXT,
+    #    time BIGINT,
+    #    INDEX chat_time(chat_id,time)
+    #)
+   # """)
 
-init_db()
-"""""
+   # conn.commit()
+  #  conn.close()
+
+#init_db()
+
 # ================== AUTH ==================
 
 @app.route('/')
