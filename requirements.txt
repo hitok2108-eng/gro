@@ -4,3 +4,4 @@ gunicorn
 eventlet
 pymysql
 werkzeug
+psycopg2-binary
