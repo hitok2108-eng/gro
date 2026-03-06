@@ -1,7 +1,7 @@
 import eventlet
 eventlet.monkey_patch()
 from flask import Flask, render_template, request, redirect, session, url_for, flash
-import pymysql
+import psycopg2
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_socketio import SocketIO, emit, join_room
@@ -14,45 +14,43 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # ================== MYSQL ==================
 
-#def get_db():
-#    return pymysql.connect(
- #       host="hitok.mysql.pythonanywhere-services.com",
- #       user="hitok",
-  #      password="0553249177aA",
-  #      database="hitok$default",
-    #    cursorclass=pymysql.cursors.DictCursor
-   # )
+postgresql://chatdb_iqim_user:dy1Gj4RpIpoT05ztE52SCfJrJIy7oM91@dpg-d61k7ojh46gs73e19ggg-a/chatdb_iqim
 
-#def init_db():
+def get_db():
+     conn = psycopg2.connect(DATABASE_URL)
+     return conn
 
- #   conn = get_db()
- #   c = conn.cursor()
+def init_db():
+ 
+    conn = get_db()
+    c = conn.cursor()
 
- #   c.execute("""
- #   CREATE TABLE IF NOT EXISTS users (
-    #    id INT AUTO_INCREMENT PRIMARY KEY,
-   #     username VARCHAR(100) UNIQUE,
-    ##    password TEXT
-  #  )
-  #  """)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY
+        password username VARCHAR(100) UNIQUE,
+        password TEXT
+    )
+    """)
 
-  #  c.execute("""
-  #  CREATE TABLE IF NOT EXISTS messages(
-  #      id INT AUTO_INCREMENT PRIMARY KEY,
-   #     chat_id VARCHAR(100),
-  #      user VARCHAR(100),
-   #     text TEXT,
-   #     image LONGTEXT,
-   #     reply TEXT,
-    #    time BIGINT,
-    #    INDEX chat_time(chat_id,time)
-    #)
-   # """)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS messages(
+        id SERIAL PRIMARY KEY,
+        chat_id VARCHAR(100),
+        user_name VARCHAR(100),
+        text TEXT,
+        image TEXT,
+        reply TEXT,
+        time BIGINT
+    )
+    """)
+    conn.commit()
+    conn.close()
 
-   # conn.commit()
-  #  conn.close()
+init_db()
 
-#init_db()
+
+
 
 # ================== AUTH ==================
 
