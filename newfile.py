@@ -14,7 +14,7 @@ socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # ================== MYSQL ==================
 
-postgresql://chatdb_iqim_user:dy1Gj4RpIpoT05ztE52SCfJrJIy7oM91@dpg-d61k7ojh46gs73e19ggg-a/chatdb_iqim
+DATABASE_URL = "postgresql://chatdb_iqim_user:password@host/chatdb_iqim"
 
 def get_db():
      conn = psycopg2.connect(DATABASE_URL)
