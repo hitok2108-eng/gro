@@ -1,7 +1,6 @@
 import eventlet
 eventlet.monkey_patch()
 from flask import Flask, render_template, request, redirect, session, url_for, flash
-import os
 import psycopg2
 import time
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -14,11 +13,6 @@ app.secret_key = 'supersecretkey'
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="eventlet")
 
 # ================== MYSQL ==================
-
-DATABASE_URL = os.environ.get("DATABASE_URL")
-def get_db():
-     conn = psycopg2.connect(DATABASE_URL)
-     return conn
 
 
 def get_db():
@@ -33,7 +27,7 @@ def init_db():
     c.execute("""
     CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY
-        password username VARCHAR(100) UNIQUE,
+        username VARCHAR(100) UNIQUE,
         password TEXT
     )
     """)
