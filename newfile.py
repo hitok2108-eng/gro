@@ -28,7 +28,7 @@ def init_db():
 
     c.execute("""
     CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY
+        id SERIAL PRIMARY KEY,
         username VARCHAR(100) UNIQUE,
         password TEXT
     )
