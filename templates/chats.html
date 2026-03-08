@@ -296,13 +296,13 @@ function addMessage(m){
 
   const user=document.createElement("div");
   user.className="user";
-  user.innerText=m.user;
+  user.innerText = m.user || m.user_name || m[0];
   div.appendChild(user);
 
-  if(m.text){
+  if(m.text || m[1]){
     const t=document.createElement("div");
     t.className="text";
-    t.innerText=m.text;
+    t.innerText=m.text || m[1];
     div.appendChild(t);
   }
 
