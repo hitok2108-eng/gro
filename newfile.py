@@ -111,7 +111,7 @@ def auth():
 
         conn.close()
 
-        if result and check_password_hash(result["password"], password):
+        if result and check_password_hash(result[0], password):
 
             session['username'] = username
             return redirect(url_for('home'))
@@ -227,7 +227,7 @@ def load_more():
     c = conn.cursor()
 
     c.execute("""
-        SELECT user,text,image,reply,time
+        SELECT user_name,text,image,reply,time
         FROM messages
         WHERE chat_id=%s AND time < %s
         ORDER BY time DESC
@@ -258,7 +258,7 @@ def on_join(data):
     c = conn.cursor()
 
     c.execute("""
-        SELECT user,text,image,reply,time
+        SELECT user_name,text,image,reply,time
         FROM messages
         WHERE chat_id=%s
         ORDER BY time DESC
@@ -302,7 +302,7 @@ def on_message(data):
     c = conn.cursor()
 
     c.execute("""
-    INSERT INTO messages(chat_id,user,text,image,reply,time)
+    INSERT INTO messages(chat_id,user_name,text,image,reply,time)
     VALUES(%s,%s,%s,%s,%s,%s)
     """,(chat_id,msg["user"],msg["text"],msg["image"],msg["reply"],msg["time"]))
 
