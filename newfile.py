@@ -237,9 +237,18 @@ def load_more():
     rows = c.fetchall()
     conn.close()
 
+    for r in rows:
+        messages.append({
+            "user": r[0],
+            "text": r[1],
+            "image": r[2],
+            "reply": r[3],
+            "time": r[4]
+        })
+     
     rows.reverse()
 
-    return {"messages":rows}
+    return {"messages":messages}
 
 # ================== SOCKET ==================
 
@@ -268,7 +277,18 @@ def on_join(data):
     rows = c.fetchall()
     conn.close()
 
-    rows.reverse()
+    messages = []
+
+    for r in rows:
+        messages.append({
+             "user": r[0],
+             "text": r[1],
+             "image": r[2],
+             "reply": r[3],
+             "time": r[4]
+        })
+
+    messages.reverse() 
 
     emit("chat_history",{
         "chatId":chat_id,
