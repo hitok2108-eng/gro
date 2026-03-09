@@ -457,7 +457,7 @@ socket.on("new_message",data=>{
 // CHAT HISTORY
 socket.on("chat_history",data=>{
 
-  data.messages.sort((a,b)=>a.time-b.time);
+  data.messages.reverse();
   messages[data.chatId]=data.messages;
 
   if(currentChat===data.chatId){
