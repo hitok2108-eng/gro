@@ -306,9 +306,9 @@ function addMessage(m){
     div.appendChild(t);
   }
 
-  if(m.image){
+  if(m.image || m[2]){
     const img=document.createElement("img");
-    img.src=m.image;
+    img.src=m.image || m[2];
     div.appendChild(img);
   }
 
