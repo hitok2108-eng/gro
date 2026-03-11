@@ -50,7 +50,7 @@ def init_db():
     CREATE TABLE IF NOT EXISTS room_admins(
         id SERIAL PRIMARY KEY,
         username VARCHAR(100),
-        chat_id INTEGER(100)
+        chat_id INTEGER
      )
      """)
     conn.commit()
@@ -335,6 +335,11 @@ def on_message(data):
 
     chat_id = data["chatId"]
 
+    # проверяем мут
+    if chat_id in muted_users:
+    if session['username'] in muted_users[chat_id]:
+        return
+
     text = data.get("text") or ""
 
     if len(text) > 500:
@@ -380,6 +385,56 @@ def on_message(data):
         "message":msg
     },to=chat_id)
 
+# ================== DELETE MESSAGE ==================
+
+@socketio.on("delete_message")
+def delete_message(data):
+
+    username = session.get("username")
+    chat_id = data.get("chatId")
+    msg_time = data.get("time")
+
+    if not username:
+        return
+
+    # проверяем админа
+    if not is_admin(username, chat_id):
+        return
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+        DELETE FROM messages
+        WHERE chat_id=%s AND time=%s
+    """,(chat_id,msg_time))
+
+    conn.commit()
+    conn.close()
+
+    emit("message_deleted",{
+        "chatId":chat_id,
+        "time":msg_time
+    },to=chat_id)
+
+# ================== MUTE USER ==================
+
+muted_users = {}
+
+@socketio.on("mute_user")
+def mute_user(data):
+
+    username = session.get("username")
+    chat_id = data.get("chatId")
+    target_user = data.get("user")
+
+    if not is_admin(username, chat_id):
+        return
+
+    if chat_id not in muted_users:
+        muted_users[chat_id] = set()
+
+    muted_users[chat_id].add(target_user)
 # ================== START ==================
 
 if __name__ == '__main__':
