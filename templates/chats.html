@@ -473,6 +473,18 @@ socket.on("new_message",data=>{
 
 });
 
+socket.on("message_deleted",data=>{
+
+  if(!messages[data.chatId]) return;
+
+  messages[data.chatId] =
+      messages[data.chatId].filter(m => m.time !== data.time);
+
+  if(currentChat === data.chatId){
+      renderMessages();
+  }
+
+});
 // CHAT HISTORY
 socket.on("chat_history",data=>{
 
