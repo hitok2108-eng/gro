@@ -45,6 +45,14 @@ def init_db():
         time BIGINT
     )
     """)
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS room_admins(
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(100),
+        chat_id VARCHAR(100)
+     )
+     """)
     conn.commit()
     conn.close()
 
