@@ -114,6 +114,13 @@ body{margin:0;background:#0f0f0f;color:#fff;height:100vh;overflow:hidden}
 <script>
 const socket = io();
 
+//admin
+let isAdmin = false;
+
+socket.on("admin_status",(data)=>{
+    isAdmin = data.is_admin;
+});
+
 // USER
 const USERNAME = "{{ username }}";
 
