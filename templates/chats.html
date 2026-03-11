@@ -293,6 +293,18 @@ function addMessage(m){
   div.className="message";
   div.dataset.time=m.time;
 
+  //admin
+  let pressTimer;
+  div.addEventListener("touchstart",()=>{
+    pressTimer=setTimeout(()=>{
+        openMessageMenu(m);
+    },600);
+  });
+
+  div.addEventListener("touchend",()=>{
+    clearTimeout(pressTimer);
+  });
+
   if(m.reply){
     const r=document.createElement("div");
     r.className="reply-box";
@@ -472,7 +484,27 @@ socket.on("chat_history",data=>{
   }
 
 });
-</script>
 
+function openMessageMenu(m) }
+
+  let menu="";
+  
+  if(isAdmin){
+    menu+="1 - Удалить\n";
+    menu+="2 - Мут\n";
+  }
+
+  menu+="3 - Ответить";
+
+  const action=prompt(menu);
+
+  if(action=="3"){
+      replyTo=m.text||"Фото";
+      replyBox.innerText="Ответ: "+replyTo;
+      replyBox.style.display="block";
+  }
+}
+
+</script>
 </body>
 </html>
