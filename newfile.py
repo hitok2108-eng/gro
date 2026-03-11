@@ -45,12 +45,12 @@ def init_db():
         time BIGINT
     )
     """)
-
+# админ
     c.execute("""
     CREATE TABLE IF NOT EXISTS room_admins(
         id SERIAL PRIMARY KEY,
         username VARCHAR(100),
-        chat_id VARCHAR(100)
+        chat_id INTEGER(100)
      )
      """)
     conn.commit()
@@ -258,6 +258,22 @@ def load_more():
 
     return {"messages":messages}
 
+#============ admin
+def is_admin(username, chat_id):
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT 1 FROM room_admins
+    WHERE username=%s AND chat_id=%s
+    """,(username, chat_id))
+
+    result = c.fetchone()
+
+    conn.close()
+
+    return result is not None
+
 # ================== SOCKET ==================
 
 @socketio.on("connect")
@@ -270,7 +286,13 @@ def on_join(data):
 
     chat_id = data["chatId"]
     join_room(chat_id)
-
+#  админ
+    username = session.get("username")
+    admin = is_admin(username, chat_id)
+    emit("admin_status", {
+        "is_admin": admin
+    })
+     
     conn = get_db()
     c = conn.cursor()
 
