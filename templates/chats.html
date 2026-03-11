@@ -485,7 +485,7 @@ socket.on("chat_history",data=>{
 
 });
 
-function openMessageMenu(m) }
+function openMessageMenu(m){
 
   let menu="";
   
@@ -498,13 +498,26 @@ function openMessageMenu(m) }
 
   const action=prompt(menu);
 
+  if(action=="1" && isAdmin){
+      socket.emit("delete_message",{
+          chatId: currentChat,
+          time: m.time
+      });
+  }
+
+  if(action=="1" && isAdmin){
+      socket.emit("mute_user",{
+          chatId: currentChat,
+          user: m.user
+      });
+  }
+ 
   if(action=="3"){
-      replyTo=m.text||"Фото";
-      replyBox.innerText="Ответ: "+replyTo;
-      replyBox.style.display="block";
+      replyTo = m.text || "Фото";
+      replyBox.innerText = "Ответ: " + replyTo;
+      replyBox.style.display = "block";
   }
 }
-
 </script>
 </body>
 </html>
