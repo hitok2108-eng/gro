@@ -384,8 +384,8 @@ def on_message(data):
 
     # проверяем мут
     if chat_id in muted_users:
-    if session['username'] in muted_users[chat_id]:
-        return
+        if session['username'] in muted_users[chat_id]:
+            return
 
     text = data.get("text") or ""
 
