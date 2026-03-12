@@ -218,6 +218,53 @@ def logout():
     session.pop('username', None)
     return redirect(url_for('start'))
 
+# ================== ADMIN PANEL ==================
+
+@app.route("/admin_panel")
+def admin_panel():
+
+    if 'username' not in session:
+        return redirect(url_for('start'))
+
+    return render_template("admin_panel.html")
+
+@app.route("/add_admin", methods=["POST"])
+def add_admin():
+
+    username = request.form.get("username")
+    chat_id = request.form.get("chat_id")
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+    INSERT INTO room_admins(username,chat_id)
+    VALUES(%s,%s)
+    """,(username,chat_id))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_panel"))
+
+@app.route("/remove_admin", methods=["POST"])
+def remove_admin():
+
+    username = request.form.get("username")
+    chat_id = request.form.get("chat_id")
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+    DELETE FROM room_admins
+    WHERE username=%s AND chat_id=%s
+    """,(username,chat_id))
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_panel"))
 # ================== LOAD MORE HISTORY ==================
 
 @app.route("/load_more")
