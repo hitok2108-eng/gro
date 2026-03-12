@@ -307,19 +307,22 @@ def load_more():
 
 #============ admin
 def is_admin(username, chat_id):
+
+    # chat_id приходит как room_1 → берём только цифру
+    room_id = chat_id.replace("room_", "").replace("admin_", "")
+
     conn = get_db()
     c = conn.cursor()
 
     c.execute("""
-    SELECT 1 FROM room_admins
-    WHERE username=%s AND chat_id=%s
-    """,(username, chat_id))
+        SELECT 1 FROM room_admins
+        WHERE username=%s AND chat_id=%s
+    """,(username, room_id))
 
     result = c.fetchone()
-
     conn.close()
 
-    return result is not None
+    return result is not None 
 
 # ================== SOCKET ==================
 
@@ -476,12 +479,15 @@ def mute_user(data):
     target_user = data.get("user")
 
     if not is_admin(username, chat_id):
+        print("НЕ АДМИН")
         return
 
     if chat_id not in muted_users:
         muted_users[chat_id] = set()
 
     muted_users[chat_id].add(target_user)
+
+    print("МУТ:", target_user, "в комнате", chat_id)
 # ================== START ==================
 
 if __name__ == '__main__':
