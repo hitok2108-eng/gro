@@ -520,7 +520,7 @@ function openMessageMenu(m){
   if(action=="2" && isAdmin){
       socket.emit("mute_user",{
           chatId: currentChat,
-          user: m.user
+          user: m.user || m.user_name
       });
   }
  
