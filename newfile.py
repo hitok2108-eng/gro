@@ -371,7 +371,7 @@ def on_join(data):
 
     emit("chat_history",{
         "chatId":chat_id,
-        "messages": messages
+        "messages": rows
     })
 
 # ================== SEND MESSAGE ==================
