@@ -308,7 +308,7 @@ def load_more():
 #============ admin
 def is_admin(username, chat_id):
 
-    room_id = int(chat_id.replace("room_", "").replace("admin_", ""))
+    room_id = chat_id.replace("room_", "").replace("admin_", "")
 
     conn = get_db()
     c = conn.cursor()
