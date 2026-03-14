@@ -308,8 +308,7 @@ def load_more():
 #============ admin
 def is_admin(username, chat_id):
 
-    # chat_id приходит как room_1 → берём только цифру
-    room_id = chat_id.replace("room_", "").replace("admin_", "")
+    room_id = int(chat_id.replace("room_", "").replace("admin_", ""))
 
     conn = get_db()
     c = conn.cursor()
@@ -322,7 +321,7 @@ def is_admin(username, chat_id):
     result = c.fetchone()
     conn.close()
 
-    return result is not None 
+    return result is not None
 
 # ================== SOCKET ==================
 
@@ -372,7 +371,7 @@ def on_join(data):
 
     emit("chat_history",{
         "chatId":chat_id,
-        "messages":rows
+        "messages": messages
     })
 
 # ================== SEND MESSAGE ==================
