@@ -143,6 +143,8 @@ def go_chats():
         return redirect(url_for('start'))
     return redirect(url_for('chats'))
 
+
+
 # ================== OLD ROUTES (ВСЕ СОХРАНЕНЫ) ==================
 
 @app.route('/shop')
@@ -305,23 +307,17 @@ def load_more():
 
     return {"messages":messages}
 
-#============ admin
-def is_admin(username, chat_id):
-
-    room_id = chat_id.replace("room_", "").replace("admin_", "")
-
+@socketio.on("get_rooms")
+def get_rooms():
     conn = get_db()
     c = conn.cursor()
-
-    c.execute("""
-        SELECT 1 FROM room_admins
-        WHERE username=%s AND chat_id=%s
-    """,(username, room_id))
-
-    result = c.fetchone()
+    # Например, список комнат берём из всех chat_id в messages
+    c.execute("SELECT DISTINCT chat_id FROM messages")
+    rows = c.fetchall()
     conn.close()
 
-    return result is not None
+    rooms = [{"id": r[0], "name": r[0]} for r in rows]  # имя можно улучшить
+    emit("rooms_list", rooms)
 
 # ================== SOCKET ==================
 
