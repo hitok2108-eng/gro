@@ -473,6 +473,17 @@ socket.on("new_message",data=>{
 
 });
 
+// Запрос комнат
+socket.emit("get_rooms");
+
+socket.on("rooms_list", rooms => {
+    baseRooms = rooms.map(r => ({
+        id: r.id.replace("room_", ""),
+        name: r.name
+    }));
+    init(); // перерисовка комнат
+});
+
 socket.on("message_deleted",data=>{
 
   if(!messages[data.chatId]) return;
@@ -511,22 +522,22 @@ function openMessageMenu(m){
   const action=prompt(menu);
 
   // 👉 Определяем настоящую комнату
-  const realChat = currentChat.startsWith("admin_")
-        ? "room_" + currentChat.split("_")[1]
-        : currentChat;
+  function getRealChatId(chatId){
+    return chatId.startsWith("admin_") ? "room_" + chatId.split("_")[1] : chatId;
+  }
 
   if(action=="1" && isAdmin){
       socket.emit("delete_message",{
-          chatId: realChat,
+          chatId: getRealChatId(currentChat),
           time: m.time
       });
   }
-
+  
   if(action=="2" && isAdmin){
-      socket.emit("mute_user",{
-          chatId: realChat,
-          user: m.user  m.user_name
-      });
+    socket.emit("mute_user",{
+        chatId: getRealChatId(currentChat),
+        user: m.user || m.user_name
+     });
   }
  
   if(action=="3"){
@@ -534,7 +545,7 @@ function openMessageMenu(m){
       replyBox.innerText = "Ответ: " + replyTo;
       replyBox.style.display = "block";
   }
- } 
+} 
 </script>
 </body>
 </html>
