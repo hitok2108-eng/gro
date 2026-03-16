@@ -510,26 +510,31 @@ function openMessageMenu(m){
 
   const action=prompt(menu);
 
+  // 👉 Определяем настоящую комнату
+  const realChat = currentChat.startsWith("admin_")
+        ? "room_" + currentChat.split("_")[1]
+        : currentChat;
+
   if(action=="1" && isAdmin){
       socket.emit("delete_message",{
-          chatId: currentChat,
+          chatId: realChat,
           time: m.time
       });
   }
 
   if(action=="2" && isAdmin){
       socket.emit("mute_user",{
-          chatId: currentChat,
-          user: m.user || m.user_name
+          chatId: realChat,
+          user: m.user  m.user_name
       });
   }
  
   if(action=="3"){
-      replyTo = m.text || "Фото";
+      replyTo = m.text  "Фото";
       replyBox.innerText = "Ответ: " + replyTo;
       replyBox.style.display = "block";
   }
-}
+ } 
 </script>
 </body>
 </html>
