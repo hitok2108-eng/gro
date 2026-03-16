@@ -541,7 +541,7 @@ function openMessageMenu(m){
   }
  
   if(action=="3"){
-      replyTo = m.text  "Фото";
+      replyTo = (m.text ||  "Фото");
       replyBox.innerText = "Ответ: " + replyTo;
       replyBox.style.display = "block";
   }
