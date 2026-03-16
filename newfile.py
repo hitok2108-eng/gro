@@ -309,14 +309,20 @@ def load_more():
 
 @socketio.on("get_rooms")
 def get_rooms():
-    # Отдаем статические комнаты
-    rooms = [
-        {"id": "room_1", "name": "Магазин Mario"},
-        {"id": "room_2", "name": "Магазин Fast"},
-        {"id": "room_3", "name": "Магазин Samurai"},
-        {"id": "room_4", "name": "Магазин Green"},
-        {"id": "room_5", "name": "Магазин Brat"}
-    ]
+    conn = get_db()
+    c = conn.cursor()
+    # Берём все chat_id из сообщений и уникальные
+    c.execute("SELECT DISTINCT chat_id FROM messages")
+    rows = c.fetchall()
+    conn.close()
+
+    rooms = []
+    for r in rows:
+        chat_id = str(r[0])
+        rooms.append({
+            "id": f"room_{chat_id}",
+            "name": f"Комната {chat_id}"
+        })
     emit("rooms_list", rooms)
 
 #============ admin
