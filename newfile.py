@@ -309,15 +309,30 @@ def load_more():
 
 @socketio.on("get_rooms")
 def get_rooms():
+    # Отдаем статические комнаты
+    rooms = [
+        {"id": "room_1", "name": "Магазин Mario"},
+        {"id": "room_2", "name": "Магазин Fast"},
+        {"id": "room_3", "name": "Магазин Samurai"},
+        {"id": "room_4", "name": "Магазин Green"},
+        {"id": "room_5", "name": "Магазин Brat"}
+    ]
+    emit("rooms_list", rooms)
+
+#============ admin
+def is_admin(username, chat_id):
+    # chat_id приходит как room_1 или admin_1 → берём только цифру
+    if chat_id.startswith("admin_") or chat_id.startswith("room_"):
+        room_id = int(chat_id.split("_")[1])
+    else:
+        room_id = int(chat_id)
+    
     conn = get_db()
     c = conn.cursor()
-    # Например, список комнат берём из всех chat_id в messages
-    c.execute("SELECT DISTINCT chat_id FROM messages")
-    rows = c.fetchall()
+    c.execute("SELECT 1 FROM room_admins WHERE username=%s AND chat_id=%s", (username, room_id))
+    result = c.fetchone()
     conn.close()
-
-    rooms = [{"id": r[0], "name": r[0]} for r in rows]  # имя можно улучшить
-    emit("rooms_list", rooms)
+    return result is not None
 
 # ================== SOCKET ==================
 
@@ -380,10 +395,14 @@ def on_message(data):
 
     chat_id = data["chatId"]
 
-    # проверяем мут
-    if chat_id in muted_users:
-        if session['username'] in muted_users[chat_id]:
-            return
+    # Получаем реальный chat_id для проверки мута
+    real_chat = chat_id
+    if chat_id.startswith("admin_"):
+        real_chat = "room_" + chat_id.split("_")[1]
+
+    # Проверяем мут
+    if real_chat in muted_users and session['username'] in muted_users[real_chat]:
+        return
 
     text = data.get("text") or ""
 
