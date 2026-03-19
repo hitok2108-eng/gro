@@ -292,6 +292,8 @@ def load_more():
     rows = c.fetchall()
     conn.close()
 
+    messages = []
+     
     for r in rows:
         messages.append({
             "user": r[0],
@@ -376,7 +378,7 @@ def on_join(data):
 
     emit("chat_history",{
         "chatId":chat_id,
-        "messages":rows
+        "messages":messages 
     })
 
 # ================== SEND MESSAGE ==================
