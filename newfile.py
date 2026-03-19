@@ -391,14 +391,14 @@ def on_message(data):
 
 # приводим chat_id к нормальному виду
     check_chat_id = chat_id
-   if isinstance(check_chat_id, str) and check_chat_id.startswith("room_"):
+    if isinstance(check_chat_id, str) and check_chat_id.startswith("room_"):
        check_chat_id = int(check_chat_id.replace("room_", ""))
 
 # проверяем мут
-   if check_chat_id in muted_users:
-       if session['username'] in muted_users[check_chat_id]:
-           emit("muted", {"message": "Вы замучены"})
-           return
+    if check_chat_id in muted_users:
+        if session['username'] in muted_users[check_chat_id]:
+            emit("muted", {"message": "Вы замучены"})
+            return
 
     text = data.get("text") or ""
 
