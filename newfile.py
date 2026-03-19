@@ -392,7 +392,7 @@ def on_message(data):
 # приводим chat_id к нормальному виду
    check_chat_id = chat_id
    if isinstance(check_chat_id, str) and check_chat_id.startswith("room_"):
-      check_chat_id = int(check_chat_id.replace("room_", ""))
+       check_chat_id = int(check_chat_id.replace("room_", ""))
 
 # проверяем мут
    if check_chat_id in muted_users:
