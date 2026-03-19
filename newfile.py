@@ -390,7 +390,7 @@ def on_message(data):
     chat_id = data["chatId"]
 
 # приводим chat_id к нормальному виду
-   check_chat_id = chat_id
+    check_chat_id = chat_id
    if isinstance(check_chat_id, str) and check_chat_id.startswith("room_"):
        check_chat_id = int(check_chat_id.replace("room_", ""))
 
