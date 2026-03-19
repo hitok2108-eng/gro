@@ -513,11 +513,11 @@ function openMessageMenu(m){
   if(action=="1" && isAdmin){
       socket.emit("delete_message",{
           chatId: currentChat,
-          time: m.time
+          id: m.id
       });
   }
 
-  if(action=="1" && isAdmin){
+  if(action=="2" && isAdmin){
       socket.emit("mute_user",{
           chatId: currentChat,
           user: m.user
