@@ -307,6 +307,13 @@ def load_more():
 
 #============ admin
 def is_admin(username, chat_id):
+
+    # приводим chat_id к нормальному виду
+    if isinstance(chat_id, str) and chat_id.startswith("room_"):
+        chat_id = chat_id.replace("room_", "")
+
+    chat_id = int(chat_id)
+
     conn = get_db()
     c = conn.cursor()
 
@@ -382,10 +389,16 @@ def on_message(data):
 
     chat_id = data["chatId"]
 
-    # проверяем мут
-    if chat_id in muted_users:
-        if session['username'] in muted_users[chat_id]:
-            return
+# приводим chat_id к нормальному виду
+   check_chat_id = chat_id
+   if isinstance(check_chat_id, str) and check_chat_id.startswith("room_"):
+      check_chat_id = int(check_chat_id.replace("room_", ""))
+
+# проверяем мут
+   if check_chat_id in muted_users:
+       if session['username'] in muted_users[check_chat_id]:
+           emit("muted", {"message": "Вы замучены"})
+           return
 
     text = data.get("text") or ""
 
@@ -406,7 +419,11 @@ def on_message(data):
     c.execute("""
     INSERT INTO messages(chat_id,user_name,text,image,reply,time)
     VALUES(%s,%s,%s,%s,%s,%s)
+    RETURNING id
     """,(chat_id,msg["user"],msg["text"],msg["image"],msg["reply"],msg["time"]))
+
+    msg_id = c.fetchone()[0]
+    msg["id"] = msg_id
 
     conn.commit()
 
@@ -439,12 +456,17 @@ def delete_message(data):
 
     username = session.get("username")
     chat_id = data.get("chatId")
-    msg_time = data.get("time")
+    msg_id = data.get("id")
 
     if not username:
         return
 
-    # проверяем админа
+    # фикс chat_id
+    if isinstance(chat_id, str) and chat_id.startswith("room_"):
+        chat_id = chat_id.replace("room_", "")
+
+    chat_id = int(chat_id)
+
     if not is_admin(username, chat_id):
         return
 
@@ -453,16 +475,16 @@ def delete_message(data):
 
     c.execute("""
         DELETE FROM messages
-        WHERE chat_id=%s AND time=%s
-    """,(chat_id,msg_time))
+        WHERE id=%s AND chat_id=%s
+    """,(msg_id, chat_id))
 
     conn.commit()
     conn.close()
 
     emit("message_deleted",{
-        "chatId":chat_id,
-        "time":msg_time
-    },to=chat_id)
+        "chatId": data.get("chatId"),  # обратно отправляем room_1
+        "id": msg_id
+    },to=data.get("chatId"))
 
 # ================== MUTE USER ==================
 
@@ -475,6 +497,11 @@ def mute_user(data):
     chat_id = data.get("chatId")
     target_user = data.get("user")
 
+    if isinstance(chat_id, str) and chat_id.startswith("room_"):
+        chat_id = chat_id.replace("room_", "")
+
+    chat_id = int(chat_id)
+
     if not is_admin(username, chat_id):
         return
 
@@ -482,6 +509,10 @@ def mute_user(data):
         muted_users[chat_id] = set()
 
     muted_users[chat_id].add(target_user)
+
+    emit("user_muted", {
+        "user": target_user
+    }, to=data.get("chatId"))
 # ================== START ==================
 
 if __name__ == '__main__':
