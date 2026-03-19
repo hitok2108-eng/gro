@@ -478,7 +478,7 @@ socket.on("message_deleted",data=>{
   if(!messages[data.chatId]) return;
 
   messages[data.chatId] =
-      messages[data.chatId].filter(m => m.time !== data.time);
+      messages[data.chatId].filter(m => m.id !== data.id);
 
   if(currentChat === data.chatId){
       renderMessages();
@@ -490,6 +490,10 @@ socket.on("chat_history",data=>{
 
   data.messages.reverse();
   messages[data.chatId]=data.messages;
+
+  socket.on("muted", (data)=>{
+    alert(data.message);
+  });
 
   if(currentChat===data.chatId){
     renderMessages();
