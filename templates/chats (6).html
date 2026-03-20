@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Chat System</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;font-family:Arial}
+body{margin:0;background:#0f0f0f;color:#fff;height:100vh;overflow:hidden}
+
+/* Layout */
+.app{display:flex;height:100vh;width:100vw}
+
+/* Sidebar */
+.sidebar{width:320px;background:#151515;border-right:1px solid #222;display:flex;flex-direction:column}
+.sidebar-header{padding:15px;font-weight:bold;border-bottom:1px solid #222}
+.chat-list{flex:1;overflow-y:auto}
+.chat-item{padding:12px 14px;border-bottom:1px solid #222;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.chat-item:hover{background:#1e1e1e}
+.chat-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-count{font-size:12px;color:#aaa}
+
+/* Main */
+.main{flex:1;display:flex;flex-direction:column;background:#0f0f0f}
+.chat-header{padding:12px 15px;border-bottom:1px solid #222;display:flex;align-items:center;gap:10px}
+.back-btn{cursor:pointer;font-size:22px;display:none}
+.admin-btn{margin-left:auto;background:#ff9800;border:none;padding:6px 10px;border-radius:6px;cursor:pointer;font-size:13px}
+
+.chat-body{flex:1;padding:12px;overflow-y:auto}
+
+.message{margin-bottom:10px}
+.message .user{font-size:11px;color:#aaa;font-weight:bold}
+.message .text{background:#1e1e1e;padding:8px 12px;border-radius:6px;display:inline-block;max-width:80%;word-wrap:break-word}
+.message img{max-width:200px;border-radius:6px;margin-top:4px;display:block}
+.reply-btn{font-size:11px;color:#4ea1ff;cursor:pointer;margin-top:3px}
+
+.reply-box{
+  background:#1a1a1a;
+  border-left:3px solid #3a3aff;
+  padding:6px 8px;
+  margin-bottom:6px;
+  font-size:12px;
+  display:none;
+}
+
+/* Input */
+.chat-input{display:flex;border-top:1px solid #222;align-items:center;flex-direction:column}
+.input-row{display:flex;width:100%;align-items:center}
+.chat-input input[type=text]{flex:1;padding:12px;border:none;outline:none;background:#151515;color:#fff;font-size:16px}
+.chat-input button{padding:12px 18px;border:none;background:#3a3aff;color:#fff;cursor:pointer;font-size:16px}
+.chat-input input[type=file]{display:none}
+.photo-btn{padding:0 14px;font-size:20px;cursor:pointer}
+
+.preview{display:flex;align-items:center;gap:10px;padding:6px 10px;background:#111;border-top:1px solid #222}
+.preview img{max-height:60px;border-radius:6px}
+.preview span{font-size:12px;color:#aaa}
+.preview button{margin-left:auto;background:#ff4444;border:none;color:#fff;padding:4px 8px;border-radius:4px;cursor:pointer}
+
+/* Mobile */
+@media (max-width:768px){
+  .app{flex-direction:column}
+  .sidebar{width:100%;height:100%;border-right:none}
+  .main{width:100%;height:100%;position:absolute;top:0;left:0;display:none}
+  .main.active{display:flex}
+  .back-btn{display:block}
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<div class="sidebar">
+  <div class="sidebar-header">ЧАТЫ</div>
+  <div class="chat-list" id="chatList"></div>
+</div>
+
+<div class="main" id="main">
+  <div class="chat-header">
+    <div class="back-btn" id="backBtn">←</div>
+    <div id="chatTitle">Чат</div>
+    <button class="admin-btn" id="adminBtn" style="display:none;">💬 Админу</button>
+  </div>
+
+  <div class="chat-body" id="roomView"></div>
+
+  <div class="chat-input">
+
+    <div class="reply-box" id="replyBox"></div>
+
+    <div class="preview" id="photoPreview" style="display:none;">
+      <img id="previewImg">
+      <span>Фото прикреплено</span>
+      <button id="removePhoto">X</button>
+    </div>
+
+    <div class="input-row">
+      <label class="photo-btn">📷
+        <input type="file" id="photoInput" accept="image/*">
+      </label>
+      <input type="text" id="msgInput" placeholder="Введите сообщение...">
+      <button id="sendBtn">➤</button>
+    </div>
+
+  </div>
+</div>
+
+</div>
+
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+
+<script>
+const socket = io();
+
+//admin
+let isAdmin = false;
+
+socket.on("admin_status",(data)=>{
+    isAdmin = data.is_admin;
+});
+
+// USER
+const USERNAME = "{{ username }}";
+
+// ROOMS
+let baseRooms = [
+  {id:1,name:"Магазин Mario"},
+  {id:2,name:"Магазин Fast"},
+  {id:3,name:"Магазин Samurai"},
+  {id:4,name:"Магазин Green"},
+  {id:5,name:"Магазин Brat"}
+];
+
+// STATE
+let chats = [];
+let messages = {};
+let currentChat = null;
+let selectedImage = null;
+let replyTo = null;
+
+let loadingHistory = false;
+let historyEnd = false;
+
+// ELEMENTS
+const chatList = document.getElementById("chatList");
+const roomView = document.getElementById("roomView");
+const chatTitle = document.getElementById("chatTitle");
+const backBtn = document.getElementById("backBtn");
+const msgInput = document.getElementById("msgInput");
+const sendBtn = document.getElementById("sendBtn");
+const main = document.getElementById("main");
+const adminBtn = document.getElementById("adminBtn");
+const photoInput = document.getElementById("photoInput");
+const photoPreview = document.getElementById("photoPreview");
+const previewImg = document.getElementById("previewImg");
+const removePhoto = document.getElementById("removePhoto");
+const replyBox = document.getElementById("replyBox");
+
+// INIT
+function init(){
+
+  chats=[];
+  messages={};
+
+  baseRooms.forEach(r=>{
+
+    const id=`room_${r.id}`;
+
+    chats.push({
+      id,
+      name:r.name,
+      type:"room",
+      roomId:r.id,
+      lastTime:0
+    });
+
+    messages[id]=[];
+
+  });
+
+  renderChatList();
+}
+
+init();
+
+// SORT
+function sortChats(){
+  chats.sort((a,b)=> (b.lastTime||0)-(a.lastTime||0));
+}
+
+// CHAT LIST
+function renderChatList(){
+
+  sortChats();
+  chatList.innerHTML="";
+
+  chats.forEach(c=>{
+
+    const div=document.createElement("div");
+    div.className="chat-item";
+    div.onclick=()=>openChat(c.id);
+
+    const name=document.createElement("div");
+    name.className="chat-name";
+    name.innerText=c.type==="admin"?`${c.name} — Админ 👑`:c.name;
+
+    const count=document.createElement("div");
+    count.className="chat-count";
+    count.innerText=(messages[c.id]?.length||0)+"/2000";
+
+    div.appendChild(name);
+    div.appendChild(count);
+
+    chatList.appendChild(div);
+
+  });
+
+}
+
+// OPEN CHAT
+function openChat(id){
+
+  currentChat=id;
+  historyEnd=false;
+
+  const chat=chats.find(c=>c.id===id);
+
+  chatTitle.innerText=chat.type==="admin"?`${chat.name} — Админ`:chat.name;
+
+  main.classList.add("active");
+
+  renderMessages();
+
+  if(chat.type==="room"){
+    adminBtn.style.display="block";
+    adminBtn.onclick=()=>openAdmin(chat);
+  }else{
+    adminBtn.style.display="none";
+  }
+
+  socket.emit("join",{chatId:id});
+
+}
+
+// ADMIN CHAT
+function openAdmin(roomChat){
+
+  const adminId=`admin_${roomChat.roomId}`;
+
+  if(!chats.find(c=>c.id===adminId)){
+
+    chats.push({
+      id:adminId,
+      name:roomChat.name,
+      type:"admin",
+      roomId:roomChat.roomId,
+      lastTime:0
+    });
+
+    messages[adminId]=[];
+
+  }
+
+  renderChatList();
+  openChat(adminId);
+
+}
+
+// BACK
+backBtn.onclick=()=>{
+  currentChat=null;
+  main.classList.remove("active");
+};
+
+// RENDER MESSAGES
+function renderMessages(){
+
+  roomView.innerHTML="";
+
+  messages[currentChat].forEach(addMessage);
+
+  roomView.scrollTop=roomView.scrollHeight;
+
+  renderChatList();
+}
+
+// ADD MESSAGE
+function addMessage(m){
+
+  const div=document.createElement("div");
+  div.className="message";
+  div.dataset.time=m.time;
+
+  //admin
+  let pressTimer;
+  div.addEventListener("touchstart",()=>{
+    pressTimer=setTimeout(()=>{
+        openMessageMenu(m);
+    },600);
+  });
+
+  div.addEventListener("touchend",()=>{
+    clearTimeout(pressTimer);
+  });
+
+  if(m.reply){
+    const r=document.createElement("div");
+    r.className="reply-box";
+    r.style.display="block";
+    r.innerText="Ответ: "+m.reply;
+    div.appendChild(r);
+  }
+
+  const user=document.createElement("div");
+  user.className="user";
+  user.innerText = m.user || m.user_name || m[0];
+  div.appendChild(user);
+
+  if(m.text || m[1]){
+    const t=document.createElement("div");
+    t.className="text";
+    t.innerText=m.text || m[1];
+    div.appendChild(t);
+  }
+
+  if(m.image || m[2]){
+    const img=document.createElement("img");
+    img.src=m.image || m[2];
+    div.appendChild(img);
+  }
+
+  const reply=document.createElement("div");
+  reply.className="reply-btn";
+  reply.innerText="Ответить";
+
+  reply.onclick=()=>{
+    replyTo=m.text||"Фото";
+    replyBox.innerText="Ответ: "+replyTo;
+    replyBox.style.display="block";
+  };
+
+  div.appendChild(reply);
+
+  roomView.appendChild(div);
+}
+
+// SCROLL LOAD HISTORY
+roomView.addEventListener("scroll", async ()=>{
+
+  if(roomView.scrollTop<30 && !loadingHistory && !historyEnd){
+
+    loadingHistory=true;
+
+    const first=roomView.firstElementChild;
+
+    if(!first){
+      loadingHistory=false;
+      return;
+    }
+
+    const before=first.dataset.time;
+
+    const res=await fetch(`/load_more?chatId=${currentChat}&before=${before}`);
+    const data=await res.json();
+
+    if(data.length===0){
+      historyEnd=true;
+      loadingHistory=false;
+      return;
+    }
+
+    messages[currentChat]=[...data,...messages[currentChat]];
+
+    const oldHeight=roomView.scrollHeight;
+
+    renderMessages();
+
+    roomView.scrollTop=roomView.scrollHeight-oldHeight;
+
+    loadingHistory=false;
+  }
+
+});
+
+// PHOTO
+photoInput.onchange=()=>{
+
+  const file=photoInput.files[0];
+  if(!file)return;
+
+  const reader=new FileReader();
+
+  reader.onload=e=>{
+    selectedImage=e.target.result;
+    previewImg.src=selectedImage;
+    photoPreview.style.display="flex";
+  };
+
+  reader.readAsDataURL(file);
+  photoInput.value="";
+};
+
+removePhoto.onclick=()=>{
+  selectedImage=null;
+  photoPreview.style.display="none";
+};
+
+// SEND MESSAGE
+sendBtn.onclick=sendMessage;
+
+msgInput.onkeydown=e=>{
+  if(e.key==="Enter")sendMessage();
+};
+
+function sendMessage(){
+
+  if(!currentChat)return;
+
+  const text=msgInput.value.trim();
+
+  if(text.length>500){
+    alert("Максимум 500 символов");
+    return;
+  }
+
+  if(!text && !selectedImage)return;
+
+  const now=Date.now();
+
+  const msg={
+    chatId:currentChat,
+    text:text||null,
+    image:selectedImage,
+    reply:replyTo,
+    time:now
+  };
+
+  socket.emit("send_message",msg);
+
+  msgInput.value="";
+  selectedImage=null;
+  replyTo=null;
+
+  photoPreview.style.display="none";
+  replyBox.style.display="none";
+
+}
+
+// RECEIVE MESSAGE
+socket.on("new_message",data=>{
+
+  if(!messages[data.chatId])messages[data.chatId]=[];
+
+  messages[data.chatId].push(data.message);
+
+  // LIMIT 2000
+  if(messages[data.chatId].length>2000){
+    messages[data.chatId].shift();
+  }
+
+  const chat=chats.find(c=>c.id===data.chatId);
+
+  if(chat)chat.lastTime=data.message.time;
+
+  if(currentChat===data.chatId){
+    addMessage(data.message);
+    roomView.scrollTop=roomView.scrollHeight;
+  }else{
+    renderChatList();
+  }
+
+});
+
+socket.on("message_deleted",data=>{
+
+  if(!messages[data.chatId]) return;
+
+  messages[data.chatId] =
+      messages[data.chatId].filter(m => m.time !== data.time);
+
+  if(currentChat === data.chatId){
+      renderMessages();
+  }
+
+});
+// CHAT HISTORY
+socket.on("chat_history",data=>{
+
+  data.messages.reverse();
+  messages[data.chatId]=data.messages;
+
+  if(currentChat===data.chatId){
+    renderMessages();
+  }
+
+});
+
+function openMessageMenu(m){
+
+  let menu="";
+  
+  if(isAdmin){
+    menu+="1 - Удалить\n";
+    menu+="2 - Мут\n";
+  }
+
+  menu+="3 - Ответить";
+
+  const action=prompt(menu);
+
+  if(action=="1" && isAdmin){
+      socket.emit("delete_message",{
+          chatId: currentChat,
+          time: m.time
+      });
+  }
+
+  if(action=="1" && isAdmin){
+      socket.emit("mute_user",{
+          chatId: currentChat,
+          user: m.user
+      });
+  }
+ 
+  if(action=="3"){
+      replyTo = m.text || "Фото";
+      replyBox.innerText = "Ответ: " + replyTo;
+      replyBox.style.display = "block";
+  }
+}
+</script>
+</body>
+</html>
