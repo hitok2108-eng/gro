@@ -297,11 +297,11 @@ def load_more():
     for r in rows:
         messages.append({
             "id": r[0],
-            "user": r[0],
-            "text": r[1],
-            "image": r[2],
-            "reply": r[3],
-            "time": r[4]
+            "user": r[1],
+            "text": r[2],
+            "image": r[3],
+            "reply": r[4],
+            "time": r[5]
         })
      
     rowa.reverse()
