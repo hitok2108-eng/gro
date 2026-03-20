@@ -499,7 +499,6 @@ socket.on("chat_history",data=>{
 });
 
 function openMessageMenu(m){
-
   let menu="";
   
   if(isAdmin){
@@ -509,20 +508,14 @@ function openMessageMenu(m){
 
   menu+="3 - Ответить";
 
-  const action=prompt(menu);
+  const action = prompt(menu);
 
   if(action=="1" && isAdmin){
-      socket.emit("delete_message",{
-          chatId: currentChat,
-          id: m.id
-      });
+      socket.emit("delete_message", { chatId: currentChat, id: m.id });
   }
 
   if(action=="2" && isAdmin){
-      socket.emit("mute_user",{
-          chatId: currentChat,
-          user: m.user
-      });
+      socket.emit("mute_user", { chatId: currentChat, user: m.user });
   }
  
   if(action=="3"){
