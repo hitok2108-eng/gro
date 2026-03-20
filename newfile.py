@@ -59,7 +59,12 @@ def init_db():
 init_db()
 
 
-
+# ================== HELPERS ==================
+def parse_chat_id(chat_id):
+    """Преобразует chatId вида 'room_1' или 'admin_1' в число 1"""
+    if isinstance(chat_id, str) and "_" in chat_id:
+        return int(chat_id.split("_")[1])
+    return int(chat_id)
 
 # ================== AUTH ==================
 
@@ -269,33 +274,24 @@ def remove_admin():
 
 @app.route("/load_more")
 def load_more():
-
-    chat_id = request.args.get("chatId")
-    before = request.args.get("before")
-
-    if not before:
-        return {"messages":[]}
-
-    before = int(before)
+    chat_id = parse_chat_id(request.args.get("chatId"))
+    before = int(request.args.get("before") or 0)
 
     conn = get_db()
     c = conn.cursor()
-
     c.execute("""
-        SELECT user_name,text,image,reply,time
+        SELECT id, user_name, text, image, reply, time
         FROM messages
         WHERE chat_id=%s AND time < %s
         ORDER BY time DESC
         LIMIT 50
-    """,(chat_id,before))
-
+    """, (chat_id, before))
     rows = c.fetchall()
     conn.close()
 
-    messages = []
-
+    messages_list = []
     for r in rows:
-        messages.append({
+        messages_list.append({
             "id": r[0],
             "user": r[1],
             "text": r[2],
@@ -303,10 +299,9 @@ def load_more():
             "reply": r[4],
             "time": r[5]
         })
-     
-    rowa.reverse()
 
-    return {"messages":messages}
+    messages_list.reverse()
+    return {"messages": messages_list}
 
 #============ admin
 def is_admin(username, chat_id):
@@ -333,48 +328,38 @@ def connect():
 
 @socketio.on("join")
 def on_join(data):
+    chat_id = parse_chat_id(data["chatId"])
+    join_room(data["chatId"])
 
-    chat_id = data["chatId"]
-    join_room(chat_id)
-#  админ
     username = session.get("username")
     admin = is_admin(username, chat_id)
-    emit("admin_status", {
-        "is_admin": admin
-    })
-     
+    emit("admin_status", {"is_admin": admin})
+
     conn = get_db()
     c = conn.cursor()
-
     c.execute("""
-        SELECT user_name,text,image,reply,time
+        SELECT id, user_name, text, image, reply, time
         FROM messages
         WHERE chat_id=%s
         ORDER BY time DESC
         LIMIT 50
-    """,(chat_id,))
-
+    """, (chat_id,))
     rows = c.fetchall()
     conn.close()
 
-    messages = []
-
+    messages_list = []
     for r in rows:
-        messages.append({
-             "id": r[0],
-             "user": r[1],
-             "text": r[2],
-             "image": r[3],
-             "reply": r[4],
-             "time": r[5]
+        messages_list.append({
+            "id": r[0],
+            "user": r[1],
+            "text": r[2],
+            "image": r[3],
+            "reply": r[4],
+            "time": r[5]
         })
 
-    messages.reverse() 
-
-    emit("chat_history",{
-        "chatId":chat_id,
-        "messages":messagea
-    })
+    messages_list.reverse()
+    emit("chat_history", {"chatId": data["chatId"], "messages": messages_list})
 
 # ================== SEND MESSAGE ==================
 
@@ -443,32 +428,20 @@ def on_message(data):
 
 @socketio.on("delete_message")
 def delete_message(data):
-
     username = session.get("username")
-    chat_id = data.get("chatId")
+    chat_id = parse_chat_id(data.get("chatId"))
     msg_id = data.get("id")
 
-    if not username:
-        return
-
-    if not is_admin(username, chat_id):
+    if not username or not is_admin(username, chat_id):
         return
 
     conn = get_db()
     c = conn.cursor()
-
-    c.execute("""
-        DELETE FROM messages
-        WHERE id=%s AND chat_id=%s
-    """,(msg_id,chat_id))
-
+    c.execute("DELETE FROM messages WHERE id=%s AND chat_id=%s", (msg_id, chat_id))
     conn.commit()
     conn.close()
 
-    emit("message_deleted",{
-        "chatId":chat_id,
-        "id":msg_id
-    },to=chat_id)
+    emit("message_deleted", {"chatId": data.get("chatId"), "id": msg_id}, to=data.get("chatId"))
 
 # ================== MUTE USER ==================
 
@@ -476,9 +449,8 @@ muted_users = {}
 
 @socketio.on("mute_user")
 def mute_user(data):
-
     username = session.get("username")
-    chat_id = data.get("chatId")
+    chat_id = parse_chat_id(data.get("chatId"))
     target_user = data.get("user")
 
     if not is_admin(username, chat_id):
