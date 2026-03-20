@@ -235,40 +235,26 @@ def admin_panel():
 
 @app.route("/add_admin", methods=["POST"])
 def add_admin():
-
     username = request.form.get("username")
-    chat_id = request.form.get("chat_id")
+    chat_id = int(request.form.get("chat_id"))
 
     conn = get_db()
     c = conn.cursor()
-
-    c.execute("""
-    INSERT INTO room_admins(username,chat_id)
-    VALUES(%s,%s)
-    """,(username,chat_id))
-
+    c.execute("INSERT INTO room_admins(username, chat_id) VALUES (%s, %s)", (username, chat_id))
     conn.commit()
     conn.close()
-
     return redirect(url_for("admin_panel"))
 
 @app.route("/remove_admin", methods=["POST"])
 def remove_admin():
-
     username = request.form.get("username")
-    chat_id = request.form.get("chat_id")
+    chat_id = int(request.form.get("chat_id"))
 
     conn = get_db()
     c = conn.cursor()
-
-    c.execute("""
-    DELETE FROM room_admins
-    WHERE username=%s AND chat_id=%s
-    """,(username,chat_id))
-
+    c.execute("DELETE FROM room_admins WHERE username=%s AND chat_id=%s", (username, chat_id))
     conn.commit()
     conn.close()
-
     return redirect(url_for("admin_panel"))
 # ================== LOAD MORE HISTORY ==================
 
