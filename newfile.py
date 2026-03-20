@@ -292,8 +292,11 @@ def load_more():
     rows = c.fetchall()
     conn.close()
 
+    messages = []
+
     for r in rows:
         messages.append({
+            "id": r[0],
             "user": r[0],
             "text": r[1],
             "image": r[2],
@@ -301,7 +304,7 @@ def load_more():
             "time": r[4]
         })
      
-    rows.reverse()
+    rowa.reverse()
 
     return {"messages":messages}
 
@@ -358,18 +361,19 @@ def on_join(data):
 
     for r in rows:
         messages.append({
-             "user": r[0],
-             "text": r[1],
-             "image": r[2],
-             "reply": r[3],
-             "time": r[4]
+             "id": r[0],
+             "user": r[1],
+             "text": r[2],
+             "image": r[3],
+             "reply": r[4],
+             "time": r[5]
         })
 
     messages.reverse() 
 
     emit("chat_history",{
         "chatId":chat_id,
-        "messages":rows
+        "messages":messagea
     })
 
 # ================== SEND MESSAGE ==================
@@ -405,8 +409,11 @@ def on_message(data):
 
     c.execute("""
     INSERT INTO messages(chat_id,user_name,text,image,reply,time)
-    VALUES(%s,%s,%s,%s,%s,%s)
+    VALUES(%s,%s,%s,%s,%s,%s) RETURNING id
     """,(chat_id,msg["user"],msg["text"],msg["image"],msg["reply"],msg["time"]))
+
+    message_id = c.fetchone()[0]
+    msg["id"] = message_id
 
     conn.commit()
 
@@ -439,12 +446,11 @@ def delete_message(data):
 
     username = session.get("username")
     chat_id = data.get("chatId")
-    msg_time = data.get("time")
+    msg_id = data.get("id")
 
     if not username:
         return
 
-    # проверяем админа
     if not is_admin(username, chat_id):
         return
 
@@ -453,15 +459,15 @@ def delete_message(data):
 
     c.execute("""
         DELETE FROM messages
-        WHERE chat_id=%s AND time=%s
-    """,(chat_id,msg_time))
+        WHERE id=%s AND chat_id=%s
+    """,(msg_id,chat_id))
 
     conn.commit()
     conn.close()
 
     emit("message_deleted",{
         "chatId":chat_id,
-        "time":msg_time
+        "id":msg_id
     },to=chat_id)
 
 # ================== MUTE USER ==================
