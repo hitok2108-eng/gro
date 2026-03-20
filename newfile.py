@@ -296,11 +296,12 @@ def load_more():
      
     for r in rows:
         messages.append({
-            "user": r[0],
-            "text": r[1],
-            "image": r[2],
-            "reply": r[3],
-            "time": r[4]
+            "id": r[0],
+            "user": r[1],
+            "text": r[2],
+            "image": r[3],
+            "reply": r[4],
+            "time": r[5]
         })
      
     rows.reverse()
@@ -367,11 +368,12 @@ def on_join(data):
 
     for r in rows:
         messages.append({
-             "user": r[0],
-             "text": r[1],
-             "image": r[2],
-             "reply": r[3],
-             "time": r[4]
+             "id": r[0],
+             "user": r[1],
+             "text": r[2],
+             "image": r[3],
+             "reply": r[4],
+             "time": r[5]
         })
 
     messages.reverse() 
@@ -392,10 +394,8 @@ def on_message(data):
     chat_id = data["chatId"]
 
 # приводим chat_id к нормальному виду
-    check_chat_id = chat_id
-    if isinstance(check_chat_id, str) and check_chat_id.startswith("room_"):
-       check_chat_id = int(check_chat_id.replace("room_", ""))
-
+    # chat_id оставляем строкой для БД
+    chat_id_db = chat_id
 # проверяем мут
     if check_chat_id in muted_users:
         if session['username'] in muted_users[check_chat_id]:
@@ -422,7 +422,7 @@ def on_message(data):
     INSERT INTO messages(chat_id,user_name,text,image,reply,time)
     VALUES(%s,%s,%s,%s,%s,%s)
     RETURNING id
-    """,(chat_id,msg["user"],msg["text"],msg["image"],msg["reply"],msg["time"]))
+    """,(chat_id_db,msg["user"],msg["text"],msg["image"],msg["reply"],msg["time"]))
 
     msg_id = c.fetchone()[0]
     msg["id"] = msg_id
@@ -464,10 +464,8 @@ def delete_message(data):
         return
 
     # фикс chat_id
-    if isinstance(chat_id, str) and chat_id.startswith("room_"):
-        chat_id = chat_id.replace("room_", "")
-
-    chat_id = int(chat_id)
+    
+    chat_id_db = chat_id
 
     if not is_admin(username, chat_id):
         return
@@ -478,7 +476,7 @@ def delete_message(data):
     c.execute("""
         DELETE FROM messages
         WHERE id=%s AND chat_id=%s
-    """,(msg_id, chat_id))
+    """,(msg_id, chat_id_db))
 
     conn.commit()
     conn.close()
@@ -499,10 +497,9 @@ def mute_user(data):
     chat_id = data.get("chatId")
     target_user = data.get("user")
 
-    if isinstance(chat_id, str) and chat_id.startswith("room_"):
-        chat_id = chat_id.replace("room_", "")
+    
 
-    chat_id = int(chat_id)
+    chat_id_db = chat_id
 
     if not is_admin(username, chat_id):
         return
