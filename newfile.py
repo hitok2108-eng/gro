@@ -290,7 +290,10 @@ def load_more():
     return {"messages": messages_list}
 
 #============ admin
+
 def is_admin(username, chat_id):
+    chat_id = parse_chat_id(chat_id)  # ВАЖНО!
+
     conn = get_db()
     c = conn.cursor()
 
