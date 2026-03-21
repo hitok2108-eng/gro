@@ -58,15 +58,7 @@ def init_db():
 
 init_db()
 
-def clear_messages():
-    conn = get_db()
-    c = conn.cursor()
-    c.execute("DELETE FROM messages;")
-    conn.commit()
-    conn.close()
-    print("MESSAGES CLEARED")
 
-clear_messages()
 
 # ================== HELPERS ==================
 def parse_chat_id(chat_id):
