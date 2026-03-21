@@ -178,7 +178,8 @@ function init(){
       name:r.name,
       type:"room",
       roomId:r.id,
-      lastTime:0
+      lastTime:0,
+      unread:0
     });
 
     messages[id]=[];
@@ -189,6 +190,19 @@ function init(){
 }
 
 init();
+
+async function loadUnread(){
+  const res = await fetch("/get_unread");
+  const data = await res.json();
+
+  chats.forEach(c=>{
+    c.unread = data[c.id] || 0;
+  });
+
+  renderChatList();
+}
+
+loadUnread();
 
 // SORT
 function sortChats(){
@@ -213,7 +227,11 @@ function renderChatList(){
 
     const count=document.createElement("div");
     count.className="chat-count";
-    count.innerText=(messages[c.id]?.length||0)+"/2000";
+    if(c.unread > 0){
+      count.innerText = c.unread;
+    } else {
+      count.innerText = "";
+    }
 
     div.appendChild(name);
     div.appendChild(count);
@@ -229,6 +247,21 @@ function openChat(id){
 
   currentChat=id;
   historyEnd=false;
+
+  const chat = chats.find(c => c.id === id);
+  if(chat){
+    chat.unread = 0;
+  }
+
+   const msgs = messages[id];
+   if(msgs && msgs.length > 0){
+     const lastTime = msgs[msgs.length - 1].time;
+
+     socket.emit("mark_read", {
+       chatId: id,
+       time: lastTime
+     });
+   }
 
   const chat=chats.find(c=>c.id===id);
 
@@ -473,18 +506,14 @@ socket.on("new_message", data => {
 
     // Обновляем lastTime для чата
     let chat = chats.find(c => c.id === data.chatId);
-    if(chat) {
-        chat.lastTime = data.message.time;
-    } else {
-        // Если чата нет в списке (новый админский чат)
-        chats.push({
-            id: data.chatId,
-            name: "Новый чат",
-            type: data.chatId.startsWith("admin_") ? "admin" : "room",
-            lastTime: data.message.time
-        });
-    }
 
+    if(chat){
+        chat.lastTime = data.message.time;
+
+        if(currentChat !== data.chatId){
+            chat.unread = (chat.unread || 0) + 1;
+        }
+    }
     // Сортировка и рендер списка чатов
     sortChats();
     renderChatList();
@@ -493,8 +522,17 @@ socket.on("new_message", data => {
     if(currentChat === data.chatId) {
         addMessage(data.message);
         roomView.scrollTop = roomView.scrollHeight;
-    }
+
+        
+        socket.emit("mark_read", {
+            chatId: data.chatId,
+            time: data.message.time
+        });
+     }
+    
 });
+
+  
 
 socket.on("message_deleted",data=>{
 
