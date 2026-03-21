@@ -61,8 +61,8 @@ def init_db():
          chat_id VARCHAR(100),
          last_read_time BIGINT,
          UNIQUE(username, chat_id)
-     )
-     """)
+      )
+      """)
     conn.commit()
     conn.close()
      
