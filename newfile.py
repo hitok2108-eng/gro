@@ -317,8 +317,10 @@ def connect():
 
 @socketio.on("join")
 def on_join(data):
-    chat_id = parse_chat_id(data["chatId"])
-    join_room(data["chatId"])
+    raw_chat_id = data["chatId"]
+    chat_id = parse_chat_id(raw_chat_id)
+
+    join_room(raw_chat_id)
 
     username = session.get("username")
     admin = is_admin(username, chat_id)
@@ -358,7 +360,8 @@ def on_message(data):
     if 'username' not in session:
         return
 
-    chat_id = data["chatId"]
+    raw_chat_id = data["chatId"]
+    chat_id = parse_chat_id(raw_chat_id)
 
     # проверяем мут
     if chat_id in muted_users:
@@ -409,16 +412,17 @@ def on_message(data):
     conn.close()
 
     emit("new_message",{
-        "chatId":chat_id,
+        "chatId":raw_chat_id,
         "message":msg
-    },to=chat_id)
+    },to=raw_chat_id)
 
 # ================== DELETE MESSAGE ==================
 
 @socketio.on("delete_message")
 def delete_message(data):
     username = session.get("username")
-    chat_id = parse_chat_id(data.get("chatId"))
+    raw_chat_id = data.get("chatId")
+    chat_id = parse_chat_id(raw_chat_id)
     msg_id = data.get("id")
 
     if not username or not is_admin(username, chat_id):
@@ -430,7 +434,7 @@ def delete_message(data):
     conn.commit()
     conn.close()
 
-    emit("message_deleted", {"chatId": data.get("chatId"), "id": msg_id}, to=data.get("chatId"))
+    emit("message_deleted", {"chatId": raw_chat_id, "id": msg_id}, to=raw_chat_id)
 
 # ================== MUTE USER ==================
 
@@ -439,7 +443,8 @@ muted_users = {}
 @socketio.on("mute_user")
 def mute_user(data):
     username = session.get("username")
-    chat_id = parse_chat_id(data.get("chatId"))
+    raw_chat_id = data.get("chatId")
+    chat_id = parse_chat_id(raw_chat_id)
     target_user = data.get("user")
 
     if not is_admin(username, chat_id):
