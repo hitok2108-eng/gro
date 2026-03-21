@@ -460,28 +460,40 @@ function sendMessage(){
 }
 
 // RECEIVE MESSAGE
-socket.on("new_message",data=>{
+socket.on("new_message", data => {
+    // Инициализируем массив сообщений для комнаты
+    if(!messages[data.chatId]) messages[data.chatId] = [];
 
-  if(!messages[data.chatId])messages[data.chatId]=[];
+    messages[data.chatId].push(data.message);
 
-  messages[data.chatId].push(data.message);
+    // LIMIT 2000
+    if(messages[data.chatId].length > 2000) {
+        messages[data.chatId].shift();
+    }
 
-  // LIMIT 2000
-  if(messages[data.chatId].length>2000){
-    messages[data.chatId].shift();
-  }
+    // Обновляем lastTime для чата
+    let chat = chats.find(c => c.id === data.chatId);
+    if(chat) {
+        chat.lastTime = data.message.time;
+    } else {
+        // Если чата нет в списке (новый админский чат)
+        chats.push({
+            id: data.chatId,
+            name: "Новый чат",
+            type: data.chatId.startsWith("admin_") ? "admin" : "room",
+            lastTime: data.message.time
+        });
+    }
 
-  const chat=chats.find(c=>c.id===data.chatId);
-
-  if(chat)chat.lastTime=data.message.time;
-
-  if(currentChat===data.chatId){
-    addMessage(data.message);
-    roomView.scrollTop=roomView.scrollHeight;
-  }else{
+    // Сортировка и рендер списка чатов
+    sortChats();
     renderChatList();
-  }
 
+    // Если это текущий чат, рендерим сообщение
+    if(currentChat === data.chatId) {
+        addMessage(data.message);
+        roomView.scrollTop = roomView.scrollHeight;
+    }
 });
 
 socket.on("message_deleted",data=>{
@@ -497,15 +509,21 @@ socket.on("message_deleted",data=>{
 
 });
 // CHAT HISTORY
-socket.on("chat_history",data=>{
+socket.on("chat_history", data => {
+    messages[data.chatId] = data.messages;
 
-  
-  messages[data.chatId]=data.messages;
+    // Обновляем lastTime
+    let chat = chats.find(c => c.id === data.chatId);
+    if(chat && data.messages.length > 0) {
+        chat.lastTime = data.messages[data.messages.length - 1].time;
+    }
 
-  if(currentChat===data.chatId){
-    renderMessages();
-  }
+    sortChats();
+    renderChatList();
 
+    if(currentChat === data.chatId) {
+        renderMessages();
+    }
 });
 
 function openMessageMenu(m){
