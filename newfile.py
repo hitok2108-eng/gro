@@ -54,15 +54,15 @@ def init_db():
      )
      """)
 
-     c.execute("""
-     CREATE TABLE IF NOT EXISTS user_chat_read (
-         id SERIAL PRIMARY KEY,
-         username VARCHAR(100),
-         chat_id VARCHAR(100),
-         last_read_time BIGINT,
-         UNIQUE(username, chat_id)
-      )
-      """)
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS user_chat_read (
+        id SERIAL PRIMARY KEY,
+        username VARCHAR(100),
+        chat_id VARCHAR(100),
+        last_read_time BIGINT,
+        UNIQUE(username, chat_id)
+     )
+     """)
     conn.commit()
     conn.close()
      
