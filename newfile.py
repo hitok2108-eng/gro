@@ -318,107 +318,105 @@ def connect():
 
 @socketio.on("join")
 def on_join(data):
-    raw_chat_id = data["chatId"]
-    
+    raw_chat_id = data.get("chatId")
+    if not raw_chat_id or 'username' not in session:
+        return
 
     join_room(raw_chat_id)
 
     username = session.get("username")
-    admin = is_admin(username, chat_id)
+    admin = is_admin(username, raw_chat_id)
     emit("admin_status", {"is_admin": admin})
 
+    # Подгружаем последние 50 сообщений для комнаты
     conn = get_db()
     c = conn.cursor()
     c.execute("""
         SELECT id, user_name, text, image, reply, time
         FROM messages
-        WHERE chat_id="room_1"
+        WHERE chat_id=%s
         ORDER BY time DESC
         LIMIT 50
-    """, (chat_id,))
+    """, (raw_chat_id,))
     rows = c.fetchall()
     conn.close()
 
-    messages_list = []
-    for r in rows:
-        messages_list.append({
-            "id": r[0],
-            "user": r[1],
-            "text": r[2],
-            "image": r[3],
-            "reply": r[4],
-            "time": r[5]
-        })
+    messages_list = [{
+        "id": r[0],
+        "user": r[1],
+        "text": r[2],
+        "image": r[3],
+        "reply": r[4],
+        "time": r[5]
+    } for r in rows]
 
-    messages_list.reverse()
-    emit("chat_history", {"chatId": data["chatId"], "messages": messages_list})
+    messages_list.reverse()  # старые сообщения сверху
+    emit("chat_history", {"chatId": raw_chat_id, "messages": messages_list})
 
-    print("LOAD CHAT:", chat_id)
+    print("LOAD CHAT:", raw_chat_id)
 # ================== SEND MESSAGE ==================
 
 @socketio.on("send_message")
 def on_message(data):
-
+    # Проверка авторизации
     if 'username' not in session:
         return
 
-    
-    chat_id = data["chatId"]
+    chat_id = data.get("chatId")
+    username = session['username']
 
-    # проверяем мут
-    if chat_id in muted_users:
-        if session['username'] in muted_users[chat_id]:
-            return
+    if not chat_id:
+        return
 
-    text = data.get("text") or ""
+    # ПРОВЕРКА НА МУТ
+    if chat_id in muted_users and username in muted_users[chat_id]:
+        print(f"User {username} is muted in {chat_id}, message ignored")
+        return
 
-    if len(text) > 500:
-        text = text[:500]
+    # Получаем данные сообщения
+    text = data.get("text") or None
+    image = data.get("image") or None
+    reply = data.get("reply") or None
+    msg_time = data.get("time") or int(time.time() * 1000)
 
     msg = {
-        "user":session['username'],
-        "text":text,
-        "image":data.get("image"),
-        "reply":data.get("reply"),
-        "time":data.get("time") or int(time.time()*1000)
+        "user": username,
+        "text": text,
+        "image": image,
+        "reply": reply,
+        "time": msg_time
     }
 
+    # Сохраняем сообщение в базе данных
     conn = get_db()
     c = conn.cursor()
-
     c.execute("""
-    INSERT INTO messages(chat_id,user_name,text,image,reply,time)
-    VALUES(%s,%s,%s,%s,%s,%s) RETURNING id
-    """,(chat_id,msg["user"],msg["text"],msg["image"],msg["reply"],msg["time"]))
-
-    message_id = c.fetchone()[0]
-    msg["id"] = message_id
-
+        INSERT INTO messages(chat_id, user_name, text, image, reply, time)
+        VALUES (%s, %s, %s, %s, %s, %s) RETURNING id
+    """, (chat_id, username, text, image, reply, msg_time))
+    msg["id"] = c.fetchone()[0]
     conn.commit()
 
-    # LIMIT 2000 сообщений на чат
+    # Ограничение до 2000 сообщений на чат
     c.execute("""
-    DELETE FROM messages
-    WHERE id NOT IN (
-        SELECT id FROM (
-            SELECT id FROM messages
-            WHERE chat_id=%s
-            ORDER BY time DESC
-            LIMIT 2000
-        ) t
-    )
-    AND chat_id=%s
-    """,(chat_id,chat_id))
-
+        DELETE FROM messages
+        WHERE id NOT IN (
+            SELECT id FROM (
+                SELECT id FROM messages
+                WHERE chat_id=%s
+                ORDER BY time DESC
+                LIMIT 2000
+            ) t
+        )
+        AND chat_id=%s
+    """, (chat_id, chat_id))
     conn.commit()
     conn.close()
 
-    emit("new_message",{
-        "chatId":raw_chat_id,
-        "message":msg
-    },to=chat_id)
+    # Отправляем сообщение всем участникам комнаты
+    emit("new_message", {"chatId": chat_id, "message": msg}, to=chat_id)
 
-    print("SAVE CHAT:", chat_id)
+    print(f"SEND MESSAGE: {msg} in {chat_id}")
 # ================== DELETE MESSAGE ==================
 
 @socketio.on("delete_message")
@@ -427,7 +425,10 @@ def delete_message(data):
     chat_id = data.get("chatId")
     msg_id = data.get("id")
 
-    if not username or not is_admin(username, chat_id):
+    if not username or not chat_id or not msg_id:
+        return
+
+    if not is_admin(username, chat_id):
         return
 
     conn = get_db()
@@ -436,11 +437,14 @@ def delete_message(data):
     conn.commit()
     conn.close()
 
-    emit("message_deleted", {"chatId": raw_chat_id, "id": msg_id}, to=chat_id)
+    # Отправка всем в комнате, чтобы клиент удалил сообщение
+    emit("message_deleted", {"chatId": chat_id, "id": msg_id}, to=chat_id)
+
+    print(f"DELETED MESSAGE {msg_id} FROM {chat_id}")
 
 # ================== MUTE USER ==================
 
-muted_users = {}
+muted_users = {}  # ключ: chatId, значение: set(username)
 
 @socketio.on("mute_user")
 def mute_user(data):
@@ -448,13 +452,20 @@ def mute_user(data):
     chat_id = data.get("chatId")
     target_user = data.get("user")
 
+    if not username or not chat_id or not target_user:
+        return
+
+    # Проверяем, что текущий пользователь — админ
     if not is_admin(username, chat_id):
         return
 
+    # Создаём множество для чата, если его ещё нет
     if chat_id not in muted_users:
         muted_users[chat_id] = set()
 
     muted_users[chat_id].add(target_user)
+
+    print(f"MUTED {target_user} in {chat_id}")
 # ================== START ==================
 
 if __name__ == '__main__':
