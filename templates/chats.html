@@ -239,12 +239,17 @@ function openChat(id){
   renderMessages();
 
   if(chat.type==="room"){
-    adminBtn.style.display="block";
     adminBtn.onclick=()=>openAdmin(chat);
+
+    if(isAdmin){
+      adminBtn.style.display="block";
+    } else {
+      adminBtn.style.display="none";
+    }
+
   }else{
     adminBtn.style.display="none";
   }
-
   socket.emit("join",{chatId:id});
 
 }
@@ -369,15 +374,15 @@ roomView.addEventListener("scroll", async ()=>{
     const before=first.dataset.time;
 
     const res=await fetch(`/load_more?chatId=${currentChat}&before=${before}`);
-    const data=await res.json();
+    const data = await res.json();
 
-    if(data.length===0){
-      historyEnd=true;
-      loadingHistory=false;
+    if(data.messages.length === 0){
+      historyEnd = true;
+      loadingHistory = false;
       return;
     }
 
-    messages[currentChat]=[...data,...messages[currentChat]];
+    messages[currentChat] = [...data.messages, ...messages[currentChat]];
 
     const oldHeight=roomView.scrollHeight;
 
@@ -494,7 +499,7 @@ socket.on("message_deleted",data=>{
 // CHAT HISTORY
 socket.on("chat_history",data=>{
 
-  data.messages.reverse();
+  
   messages[data.chatId]=data.messages;
 
   if(currentChat===data.chatId){
