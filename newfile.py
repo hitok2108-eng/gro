@@ -353,6 +353,7 @@ def on_join(data):
     messages_list.reverse()
     emit("chat_history", {"chatId": data["chatId"], "messages": messages_list})
 
+    print("LOAD CHAT:", chat_id)
 # ================== SEND MESSAGE ==================
 
 @socketio.on("send_message")
@@ -417,6 +418,7 @@ def on_message(data):
         "message":msg
     },to=raw_chat_id)
 
+    print("SAVE CHAT:", chat_id)
 # ================== DELETE MESSAGE ==================
 
 @socketio.on("delete_message")
