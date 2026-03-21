@@ -53,8 +53,19 @@ def init_db():
         chat_id INTEGER
      )
      """)
+
+     c.execute("""
+     CREATE TABLE IF NOT EXISTS user_chat_read (
+         id SERIAL PRIMARY KEY,
+         username VARCHAR(100),
+         chat_id VARCHAR(100),
+         last_read_time BIGINT,
+         UNIQUE(username, chat_id)
+     )
+     """)
     conn.commit()
     conn.close()
+     
 
 init_db()
 
@@ -148,6 +159,30 @@ def go_chats():
     if 'username' not in session:
         return redirect(url_for('start'))
     return redirect(url_for('chats'))
+
+@app.route("/get_unread")
+def get_unread():
+    if 'username' not in session:
+        return {}
+
+    username = session['username']
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT m.chat_id, COUNT(*)
+    FROM messages m
+    LEFT JOIN user_chat_read r
+      ON m.chat_id = r.chat_id AND r.username = %s
+    WHERE m.time > COALESCE(r.last_read_time, 0)
+    GROUP BY m.chat_id
+    """, (username,))
+
+    rows = c.fetchall()
+    conn.close()
+
+    return {chat_id: count for chat_id, count in rows}
 
 # ================== OLD ROUTES (ВСЕ СОХРАНЕНЫ) ==================
 
@@ -308,6 +343,31 @@ def is_admin(username, chat_id):
     conn.close()
 
     return result is not None
+
+@socketio.on("mark_read")
+def mark_read(data):
+    if 'username' not in session:
+        return
+
+    username = session['username']
+    chat_id = data.get("chatId")
+    last_time = data.get("time")
+
+    if not chat_id or not last_time:
+        return
+
+    conn = get_db()
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO user_chat_read(username, chat_id, last_read_time)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (username, chat_id)
+        DO UPDATE SET last_read_time = EXCLUDED.last_read_time
+    """, (username, chat_id, last_time))
+
+    conn.commit()
+    conn.close()
 
 # ================== SOCKET ==================
 
