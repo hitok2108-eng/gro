@@ -117,10 +117,15 @@ const socket = io();
 //admin
 let isAdmin = false;
 
-socket.on("admin_status",(data)=>{
+socket.on("admin_status", (data) => {
     isAdmin = data.is_admin;
-});
 
+    if (isAdmin && currentChat && currentChat.startsWith("room_")) {
+        adminBtn.style.display = "block";
+    } else {
+        adminBtn.style.display = "none";
+    }
+});
 // USER
 const USERNAME = "{{ username }}";
 
