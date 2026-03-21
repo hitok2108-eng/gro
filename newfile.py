@@ -260,7 +260,7 @@ def remove_admin():
 
 @app.route("/load_more")
 def load_more():
-    chat_id = parse_chat_id(request.args.get("chatId"))
+    chat_id = request.args.get("chatId")
     before = int(request.args.get("before") or 0)
 
     conn = get_db()
@@ -292,7 +292,7 @@ def load_more():
 #============ admin
 
 def is_admin(username, chat_id):
-    chat_id = parse_chat_id(chat_id)  # ВАЖНО!
+    chat_id = parse_chat_id(chat_id) # ВАЖНО!
 
     conn = get_db()
     c = conn.cursor()
@@ -318,7 +318,7 @@ def connect():
 @socketio.on("join")
 def on_join(data):
     raw_chat_id = data["chatId"]
-    chat_id = parse_chat_id(raw_chat_id)
+    chat_id = raw_chat_id
 
     join_room(raw_chat_id)
 
@@ -361,7 +361,7 @@ def on_message(data):
         return
 
     raw_chat_id = data["chatId"]
-    chat_id = parse_chat_id(raw_chat_id)
+    chat_id = raw_chat_id
 
     # проверяем мут
     if chat_id in muted_users:
@@ -422,7 +422,7 @@ def on_message(data):
 def delete_message(data):
     username = session.get("username")
     raw_chat_id = data.get("chatId")
-    chat_id = parse_chat_id(raw_chat_id)
+    chat_id = raw_chat_id
     msg_id = data.get("id")
 
     if not username or not is_admin(username, chat_id):
@@ -444,7 +444,7 @@ muted_users = {}
 def mute_user(data):
     username = session.get("username")
     raw_chat_id = data.get("chatId")
-    chat_id = parse_chat_id(raw_chat_id)
+    chat_id = raw_chat_id
     target_user = data.get("user")
 
     if not is_admin(username, chat_id):
