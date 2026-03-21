@@ -293,7 +293,7 @@ def load_more():
 #============ admin
 
 def is_admin(username, chat_id):
-    chat_id = parse_chat_id(chat_id) # ВАЖНО!
+    
 
     conn = get_db()
     c = conn.cursor()
@@ -319,7 +319,7 @@ def connect():
 @socketio.on("join")
 def on_join(data):
     raw_chat_id = data["chatId"]
-    chat_id = raw_chat_id
+    
 
     join_room(raw_chat_id)
 
@@ -332,7 +332,7 @@ def on_join(data):
     c.execute("""
         SELECT id, user_name, text, image, reply, time
         FROM messages
-        WHERE chat_id=%s
+        WHERE chat_id="room_1"
         ORDER BY time DESC
         LIMIT 50
     """, (chat_id,))
@@ -362,8 +362,8 @@ def on_message(data):
     if 'username' not in session:
         return
 
-    raw_chat_id = data["chatId"]
-    chat_id = raw_chat_id
+    
+    chat_id = data["chatId"]
 
     # проверяем мут
     if chat_id in muted_users:
@@ -416,7 +416,7 @@ def on_message(data):
     emit("new_message",{
         "chatId":raw_chat_id,
         "message":msg
-    },to=raw_chat_id)
+    },to=chat_id)
 
     print("SAVE CHAT:", chat_id)
 # ================== DELETE MESSAGE ==================
@@ -424,8 +424,7 @@ def on_message(data):
 @socketio.on("delete_message")
 def delete_message(data):
     username = session.get("username")
-    raw_chat_id = data.get("chatId")
-    chat_id = raw_chat_id
+    chat_id = data.get("chatId")
     msg_id = data.get("id")
 
     if not username or not is_admin(username, chat_id):
@@ -437,7 +436,7 @@ def delete_message(data):
     conn.commit()
     conn.close()
 
-    emit("message_deleted", {"chatId": raw_chat_id, "id": msg_id}, to=raw_chat_id)
+    emit("message_deleted", {"chatId": raw_chat_id, "id": msg_id}, to=chat_id)
 
 # ================== MUTE USER ==================
 
@@ -446,8 +445,7 @@ muted_users = {}
 @socketio.on("mute_user")
 def mute_user(data):
     username = session.get("username")
-    raw_chat_id = data.get("chatId")
-    chat_id = raw_chat_id
+    chat_id = data.get("chatId")
     target_user = data.get("user")
 
     if not is_admin(username, chat_id):
