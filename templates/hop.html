@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Каталог</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+}
+
+/* HEADER НА ВСЮ ШИРИНУ */
+.header {
+    width: 100%;
+    background: #1f1f1f;
+    padding: 14px;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* КОНТЕЙНЕР */
+.container {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+    padding: 14px;
+}
+
+/* КАРТОЧКА */
+.card {
+    width: 100%;
+    margin: 16px 0;
+    background: #1e1e1e;
+    border-radius: 22px;
+    padding: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+}
+
+/* КАРТИНКА */
+.card img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+}
+
+/* ЗАГОЛОВОК */
+.card-title {
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+    margin: 12px 0;
+}
+
+/* КНОПКИ */
+
+.button {
+    padding: 13px;
+    border: 1px solid #444;
+    border-radius: 14px;
+    font-size: 15px;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+    background: transparent; /* ❗ убрали цвет */
+}
+
+.button {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* расстояние между кнопками */
+    margin-top: 10px;
+}
+
+
+/* КАТАЛОГ */
+.catalog-title {
+    text-align: center;
+    font-size: 20px;
+    margin: 18px 0 10px;
+}
+
+/* ТОВАР */
+.product {
+    background: #1e1e1e;
+    border-radius: 18px;
+    padding: 12px;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+}
+
+.product img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.product-title {
+    font-size: 17px;
+    margin-bottom: 6px;
+}
+
+.product-desc {
+    font-size: 14px;
+    color: #ccc;
+}
+
+.product-desc ul {
+    padding-left: 18px;
+    margin: 0;
+}
+
+/* АДАПТАЦИЯ */
+@media (max-width: 360px) {
+    .container {
+        padding: 10px;
+    }
+
+    .card img {
+        height: 170px;
+    }
+
+    .product img {
+        height: 150px;
+    }
+
+    .button {
+        font-size: 14px;
+        padding: 12px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER (НА ВСЮ ШИРИНУ) -->
+<div class="header">
+    AleanseMD
+</div>
+
+<div class="container">
+
+    <!-- КАРТОЧКА -->
+    <div class="card">
+        <img src="https://via.placeholder.com/400x250">
+
+        <div class="card-title">зая</div>
+
+        <div class="buttons">
+    <a href="#" class="button">Оператор</a>
+    <a href="#" class="button">Бот</a>
+    <a href="#" class="button">Группа</a>
+    <a href="#" class="button">Отзывы</a>
+</div>
+
+    </div>
+
+    <!-- КАТАЛОГ -->
+    <div class="catalog-title">Каталог</div>
+
+    <div class="product">
+        <img src="https://via.placeholder.com/400x200">
+        <div class="product-title">Товар 1</div>
+        <div class="product-desc">Простое описание товара</div>
+    </div>
+
+    <div class="product">
+        <img src="https://via.placeholder.com/400x200">
+        <div class="product-title">Товар 2</div>
+        <div class="product-desc">
+            <ul>
+                <li>Пункт 1</li>
+                <li>Пункт 2</li>
+                <li>Пункт 3</li>
+                <li>Пункт 1</li>
+                <li>Пункт 2</li>
+                <li>Пункт 3</li>
+            </ul>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
